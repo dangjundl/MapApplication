@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/zoomlevel1"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="줌레벨 1" />
+
+    <Button
+        android:id="@+id/zoomlevel2"
+        android:layout_toRightOf="@+id/zoomlevel1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="줌레벨 2" />
+
+    <Button
+        android:id="@+id/zoomlevel3"
+        android:layout_toRightOf="@+id/zoomlevel2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="줌레벨 3" />
+
+    <Button
+        android:id="@+id/zoomlevel4"
+        android:layout_toRightOf="@+id/zoomlevel3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="줌레벨 4" />
+
+    <Button
+        android:id="@+id/zoomlevel5"
+        android:layout_toRightOf="@+id/zoomlevel4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="줌레벨 5" />
+
+    <Button
+        android:id="@+id/my_location"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="내위치"/>
+
+    <Button
+        android:id="@+id/my_direction"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/my_location"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="방향 보기"/>
+
+    <RelativeLayout
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+
+
+</RelativeLayout>
