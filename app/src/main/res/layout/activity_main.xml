@@ -4,40 +4,41 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!--필요에따라 버튼에 애니메이션 넣기-->
+
     <Button
         android:id="@+id/zoomlevel1"
         android:layout_alignParentLeft="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="줌레벨 1" />
-
+        android:text="1" />
     <Button
         android:id="@+id/zoomlevel2"
         android:layout_toRightOf="@+id/zoomlevel1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="줌레벨 2" />
+        android:text="2" />
 
     <Button
         android:id="@+id/zoomlevel3"
         android:layout_toRightOf="@+id/zoomlevel2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="줌레벨 3" />
+        android:text="3" />
 
     <Button
         android:id="@+id/zoomlevel4"
         android:layout_toRightOf="@+id/zoomlevel3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="줌레벨 4" />
+        android:text="4" />
 
     <Button
         android:id="@+id/zoomlevel5"
         android:layout_toRightOf="@+id/zoomlevel4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="줌레벨 5" />
+        android:text="5" />
 
     <Button
         android:id="@+id/my_location"
