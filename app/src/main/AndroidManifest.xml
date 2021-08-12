@@ -4,10 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-
-
 
     <application
         android:allowBackup="true"
@@ -18,8 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
-        <activity android:name=".imageView"
+        <activity android:name=".DisplayImage"
             android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".imageView"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="landscape">

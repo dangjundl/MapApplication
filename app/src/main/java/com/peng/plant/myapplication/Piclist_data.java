@@ -2,7 +2,7 @@ package com.peng.plant.myapplication;
 
 import java.io.Serializable;
 
-class mapData implements Serializable {
+class Piclist_data implements Serializable {
 
     String name;
     String img_path;
@@ -10,7 +10,7 @@ class mapData implements Serializable {
     double longitude;
     double distance;
 
-    public mapData() {}
+    public Piclist_data() {}
 
     public double getLatitude() {
         return latitude;
