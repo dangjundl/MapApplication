@@ -1,5 +1,7 @@
 package com.peng.plant.myapplication;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 class mapData implements Serializable {
@@ -10,7 +12,18 @@ class mapData implements Serializable {
     double longitude;
     double distance;
 
-    public mapData() {}
+    public Bitmap getBitmap_Marker() {
+        return bitmap_Marker;
+    }
+
+    public void setBitmap_Marker(Bitmap bitmap_Marker) {
+        this.bitmap_Marker = bitmap_Marker;
+    }
+
+    Bitmap bitmap_Marker;
+
+    public mapData() {
+    }
 
     public double getLatitude() {
         return latitude;

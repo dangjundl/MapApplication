@@ -5,6 +5,6 @@ import java.util.ArrayList;
 
 public interface itemClickListener {
 
-//    void onPicClicked(PicHolder holder, int position, ArrayList<pictureFacer> pics);
+    void onPicClicked(recycler_adapter.CustomViewHolder holder, int position, ArrayList<Piclist_data> pics);
 
 }

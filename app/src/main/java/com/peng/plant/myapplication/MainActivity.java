@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -27,15 +29,24 @@ import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static net.daum.mf.map.api.MapPOIItem.ShowAnimationType.SpringFromGround;
+
 
 public class MainActivity extends AppCompatActivity implements MapView.POIItemEventListener, MapView.CurrentLocationEventListener, MapView.MapViewEventListener, TiltScrollController.ScrollListener {
 
-    private Button zoombtn1, zoombtn2, zoombtn3, zoombtn4, zoombtn5, display_move, display_stop,release_btn;
+    private Button zoombtn1, zoombtn2, zoombtn3, zoombtn4, zoombtn5, display_move, display_stop, release_btn;
     private double latitude, longitude, x_location, y_location;
     private boolean display_controll;
     private MapView mapView;
@@ -46,17 +57,19 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     private ArrayList<Double> markers;
     private Button distance_test, distance_test2;
     private Boolean distance1, distance2;
-    private ArrayList <MapPOIItem> marker;
-    private ArrayList <MapPoint> mapPoint;
-    private  ArrayList <mapData> mapDatas;
-    private  ArrayList <Piclist_data> imglist;
+    private ArrayList<MapPOIItem> marker;
+    private ArrayList<MapPoint> mapPoint;
+    private ArrayList<mapData> mapDatas;
+    private ArrayList<Piclist_data> imglist;
     private int select_circle;
-    String[] img;
+    private Bitmap mbitmap, resize_bitmap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        overridePendingTransition(R.anim.fade_in, R.anim.none);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         permission_check();
 
@@ -91,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
 
         //마커 목록
         marker = new ArrayList<MapPOIItem>();
-       //마커가 화면에 표시될 좌표 목록
+        //마커가 화면에 표시될 좌표 목록
         mapPoint = new ArrayList<MapPoint>();
 
         //사용자가 입력한 사진데이터 , 이름데이터를 가져와서 각각 setName , pic_data에 넣어줌 -> 요부분은 내생각에 mapData를 이용해야 하지않을까
@@ -99,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         setName.add(0, "(주)와트");
         setName.add(1, "서울");
         setName.add(2, "하아하아아");
-        
+
         //사진 데이터
         pic_data.add("https://cdn.kado.net/news/photo/202004/1018454_448598_1539.jpg,http://image.canon-ci.co.kr/pds/editor/images/000062/20180404151051869_70ODYPB7.png,http://image.canon-ci.co.kr/pds/editor/images/000096/20190611140954550_350LWRGN.jpg");
         pic_data.add("https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/mt/2021/07/11/mt_1625955064430_659172_0.jpg");
@@ -111,94 +124,119 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         mapView.setMapCenterPointAndZoomLevel(test2, 5, true);
         mapViewContainer.addView(mapView);
 
-
-        for (int i=0; i<setName.size(); i++){
-            marker.add(i,new MapPOIItem());
-            mapPoint.add(i,MapPoint.mapPointWithGeoCoord((37.43207-(i*0.01)),((127.17650-(i*0.01)))));
+        for (int i = 0; i < setName.size(); i++) {
+            marker.add(i, new MapPOIItem());
+            mapPoint.add(i, MapPoint.mapPointWithGeoCoord((37.43207 - (i * 0.01)), ((127.17650 - (i * 0.01)))));
         }
 
-        Log.d("마커사이즈", "onCreate: "+marker.size());
+        Log.d("마커사이즈", "onCreate: " + marker.size());
 
 //        mapPoint.add(0,MapPoint.mapPointWithGeoCoord(37.43207,27.17650));
 //        MapPoint mapPoints = MapPoint.mapPointWithGeoCoord(37.43207, 127.17650);
-
-
-//        MapPOIItem marker = new MapPOIItem();
-//        marker.setItemName("(주)와트");
-//        marker.get(0).setTag(1);
-//        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(37.43228, 127.17833);
-//        marker.get(0).setMapPoint(mapPoint);
-//        marker.get(0).setMarkerType(MapPOIItem.MarkerType.CustomImage);
-//        marker.get(0).setCustomImageResourceId(R.drawable.test2);
-////        marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
-//        marker.get(0).setCustomImageAnchor(0.5f, 1.0f); // 마커 이미지중 기준이 되는 위치(앵커포인트) 지정 - 마커 이미지 좌측 상단 기준 x(0.0f ~ 1.0f), y(0.0f ~ 1.0f) 값.
 
         mapView.setPOIItemEventListener(this);
         mapView.setCurrentLocationEventListener(this);
         mapView.setMapViewEventListener(this);
         mapView.getMapCenterPoint();
-        // mapView.releaseUnusedMapTileImageResources(); 지도 타일 이미지 캐쉬 데이터 들을 삭제하여 메모리를 확보할 수 있다.
+        mapView.setMapTilePersistentCacheEnabled(true);
         tracking_controll(1);
-        drawMarker();
 
 
-        for(int i=0; i<setName.size(); i++){
+        for (int i = 0; i < setName.size(); i++) {
             mapData mData = new mapData();
             mData.setName(setName.get(i));
             mData.setImg_path(pic_data.get(i));
-            mData.setLatitude((37.43207-(i*0.01)));
-            mData.setLongitude((127.17650-(i*0.01)));
+            mData.setLatitude((37.43207 - (i * 0.01)));
+            mData.setLongitude((127.17650 - (i * 0.01)));
             mapDatas.add(mData);
         }
 
-        for(int i=0; i<mapDatas.size(); i++) {
+        for (int i = 0; i < mapDatas.size(); i++) {
             String piclist = mapDatas.get(i).getImg_path();
             String[] img = piclist.split(",");
-            for(int j =0; j<img.length; j++) {
+            for (int j = 0; j < img.length; j++) {
                 if (img.length > 1) {
                     Piclist_data mPicdata = new Piclist_data();
                     mPicdata.img_path = img[j];
-                    Log.d("호롤롤ㄹ롤", "onCalloutBalloonOfPOIItemTouched: i값 : " + i);
-                    Log.d("이미지값", "onCalloutBalloonOfPOIItemTouched: img :" + img[i]);
                     imglist.add(mPicdata);
                 }
             }
         }
 
+        for (int i = 0; i < mapDatas.size(); i++) {
+            String piclist = mapDatas.get(i).getImg_path();
+            String[] img = piclist.split(",");
+            if (img.length == 1) {
+                int finalI = i;
+                Thread mThread = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            URL url = new URL(mapDatas.get(finalI).getImg_path());
 
-//        for (int i=0; i<img.length; i++){
-//            Log.d("값", "이미지주소 값 : "+ i + img[i]);
-//
-//        }
+                            // Web에서 이미지를 가져온 뒤
+                            // ImageView에 지정할 Bitmap을 만든다
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            conn.setDoInput(true); // 서버로 부터 응답 수신
+                            conn.connect();
 
+                            InputStream is = conn.getInputStream(); // InputStream 값 가져오기
+                            mbitmap = BitmapFactory.decodeStream(is); // Bitmap으로 변환
+                            resize_bitmap = Bitmap.createScaledBitmap(mbitmap, 160, 120, true);
 
-        Log.d("사이즈", "onCreate: mapDatasSize : "+mapDatas.size());
-        Log.d("사이즈", "onCreate: mapDatasSize1 : "+mapDatas.get(0).getName());
-        Log.d("사이즈", "onCreate: mapDatasSize2 : "+mapDatas.get(1).getName());
-        Log.d("사이즈", "onCreate: mapDatasSize3 : "+mapDatas.get(2).getName());
-        Log.d("ddd", "onCreate: dsds"+mapDatas.get(0).getDistance());
+                            mapDatas.get(finalI).setBitmap_Marker(resize_bitmap);
 
+                            Log.d("정상작동?", "run: 비트맵값 " + mapDatas.get(finalI).getBitmap_Marker());
+
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                mThread.start(); // Thread 실행
+
+                try {
+                    // 메인 Thread는 별도의 작업 Thread가 작업을 완료할 때까지 대기해야한다
+                    // join()를 호출하여 별도의 작업 Thread가 종료될 때까지 메인 Thread가 기다리게 한다
+                    mThread.join();
+                    Log.d("dsd", "onCreate: 비트맵값 정확히 가져온거야? : " + mbitmap);
+
+                    // 작업 Thread에서 이미지를 불러오는 작업을 완료한 뒤
+                    // UI 작업을 할 수 있는 메인 Thread에서 ImageView에 이미지를 지정한다
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        drawMarker();
 
 
         distance_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (latitude > 0 && longitude > 0 && distance1 &&1<select_circle) {
+                if (latitude > 0 && longitude > 0 && distance1) {
                     drawcircle(500);
                     distance2 = true;
                     Log.d("daeng", "onClick: marker_show 크기 : " + markers.size());
                     for (int i = 0; i < poiItems.length; i++) {
                         if (markers.get(i) < 500) {
                             poiItems[i].setItemName(setName.get(i));
+                            poiItems[i].setShowAnimationType(SpringFromGround);
+
                             Log.d("daeng", "onClick: " + poiItems[i].getItemName());
-                        }
-                        else{
+                        } else {
                             poiItems[i].setItemName(null);
                         }
                     }
                     mapView.addPOIItems(poiItems);
+
                     distance1 = false;
-                    select_circle = 1;
+//                    select_circle = 1;
 
                 }
             }
@@ -214,15 +252,15 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                     for (int i = 0; i < poiItems.length; i++) {
                         if (markers.get(i) < 4000) {
                             poiItems[i].setItemName(setName.get(i));
-                        }
-                        else{
+                            poiItems[i].setShowAnimationType(SpringFromGround);
+                        } else {
                             poiItems[i].setItemName(null);
 
                         }
                     }
                     mapView.addPOIItems(poiItems);
                     distance2 = false;
-                    select_circle = 2;
+//                    select_circle = 2;
                 }
             }
         });
@@ -308,17 +346,24 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     @Override
     public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
 
+        imglist.removeAll(imglist);
 
         for (int i = 0; i < poiItems.length; i++) {
             if (mapPOIItem.getItemName().equals(poiItems[i].getItemName())) {
                 String piclist = mapDatas.get(i).getImg_path();
                 String[] img = piclist.split(",");
-                if(img.length==1) {
+                for (int j = 0; j < img.length; j++) {
+                    if (img.length > 1) {
+                        Piclist_data mPicdata = new Piclist_data();
+                        mPicdata.img_path = img[j];
+                        imglist.add(mPicdata);
+                    }
+                }
+                if (img.length == 1) {
                     Intent intent = new Intent(MainActivity.this, imageView.class);
                     intent.putExtra("image_data", pic_data.get(i));
                     startActivity(intent);
-                }
-                else{
+                } else {
                     Intent intents = new Intent(MainActivity.this, DisplayImage.class);
                     intents.putExtra("mapData", imglist);
                     startActivity(intents);
@@ -328,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         }
     }
 
+
     @Override
     public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
     }
@@ -335,17 +381,14 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     @Override
     public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
         //이코드 부분 다시 살펴보기
-//        Log.d("플롯값", "onCurrentLocationUpdate: v값" + v);
         MapPoint.GeoCoordinate mapPointGeo = mapPoint.getMapPointGeoCoord();
         latitude = mapPointGeo.latitude;
         longitude = mapPointGeo.longitude;
         marker_distance();
 
-        for(int i=0; i<setName.size(); i++){
+        for (int i = 0; i < setName.size(); i++) {
             mapDatas.get(i).setDistance(markers.get(0));
         }
-        Log.d("하하하하", "onCurrentLocationUpdate: " + mapDatas.get(0).getDistance());
-
     }
 
     @Override
@@ -420,6 +463,12 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     }
 
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.none, R.anim.fade_out);
+    }
+
     //위치 권한 허용
     private void permission_check() {
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -450,21 +499,20 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
 
     private void marker_distance() {
 
-        if (latitude > 0 && longitude > 0&& poiItems !=null)
+        if (latitude > 0 && longitude > 0 && poiItems != null)
             for (int i = 0; i < poiItems.length; i++) {
                 double map_test = poiItems[i].getMapPoint().getMapPointGeoCoord().latitude;
                 double map_tests = poiItems[i].getMapPoint().getMapPointGeoCoord().longitude;
                 markers.add(i, DistanceByDegreeAndroid(latitude, longitude, map_test, map_tests));
 
-                Log.d("result", "marker_distance: " + markers.get(i)+"m");
+                Log.d("result", "marker_distance: " + markers.get(i) + "m");
 
             }
 
-       int i = Integer.parseInt(String.valueOf(Math.round(markers.get(0))));
-            //double형을 int값으로 형변환
+        int i = Integer.parseInt(String.valueOf(Math.round(markers.get(0))));
+        //double형을 int값으로 형변환
 
-        Log.d("result", "값이뭐냐: " + i+"M");
-
+        Log.d("result", "값이뭐냐: " + i + "M");
 
     }
 
@@ -478,7 +526,6 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         }
     }
 
-
     private void drawcircle(int radius) {
         mapView.removeAllCircles();
         mapView.removeAllPOIItems();
@@ -489,20 +536,32 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 Color.argb(0, 0, 0, 0) // fillColor
         );
         circle1.setTag(1234);
+        drawMarker();
         mapView.addCircle(circle1);
-
     }
 
-    private void drawMarker(){
+    private void drawMarker() {
 
         poiItems = new MapPOIItem[setName.size()];
 
-        for(int i=0; i<marker.size(); i++) {
-            marker.get(i).setTag(i);
-            marker.get(i).setMapPoint(mapPoint.get(i));
-            marker.get(i).setMarkerType(MapPOIItem.MarkerType.BluePin);
-            marker.get(i).setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
-            poiItems[i] = marker.get(i);
+        for (int i = 0; i < marker.size(); i++) {
+            String piclist = mapDatas.get(i).getImg_path();
+            String[] img = piclist.split(",");
+            if (img.length > 1) {
+                marker.get(i).setTag(i);
+                marker.get(i).setMapPoint(mapPoint.get(i));
+                marker.get(i).setMarkerType(MapPOIItem.MarkerType.BluePin);
+                marker.get(i).setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+                poiItems[i] = marker.get(i);
+            } else {
+                marker.get(i).setTag(i);
+                marker.get(i).setMapPoint(mapPoint.get(i));
+                marker.get(i).setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+                marker.get(i).setMarkerType(MapPOIItem.MarkerType.CustomImage);
+                marker.get(i).setCustomImageBitmap(mapDatas.get(i).getBitmap_Marker());
+//            marker.get(i).setCustomImageAnchor(0.5f, 1.0f);
+                poiItems[i] = marker.get(i);
+            }
         }
     }
 

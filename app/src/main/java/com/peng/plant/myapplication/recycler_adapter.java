@@ -18,11 +18,13 @@ import java.util.ArrayList;
 class recycler_adapter extends RecyclerView.Adapter<recycler_adapter.CustomViewHolder> {
     private ArrayList<Piclist_data> arrayList;
     private final Context pictureContx;
+    private final itemClickListener picListerner;
 
-    public recycler_adapter(ArrayList<Piclist_data> arrayList,Context pictureContext) {
+
+    public recycler_adapter(ArrayList<Piclist_data> arrayList, Context pictureContext, itemClickListener picListerner) {
         this.arrayList = arrayList;
         this.pictureContx = pictureContext;
-
+        this.picListerner = picListerner;
     }
 
     @NonNull
@@ -37,36 +39,20 @@ class recycler_adapter extends RecyclerView.Adapter<recycler_adapter.CustomViewH
 
     @Override
     public void onBindViewHolder(@NonNull recycler_adapter.CustomViewHolder holder, int position) {
-//        holder.TextView_title.setText(arrayList.get(position).getTextView_title());
-//        holder.InputEditText_contents.setText(arrayList.get(position).getTv_content());
+
         Piclist_data mdata = arrayList.get(position);
-                        Glide.with(pictureContx)
-                        .load(mdata.getImg_path())
-                        .into(holder.imageView);
+        Glide.with(pictureContx)
+                .load(mdata.getImg_path())
+                .into(holder.imageView);
 
         holder.location_name.setText(mdata.name);
 
-//        holder.itemView.setTag(position);
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                String curName = holder.TextView_title.getText().toString();
-////                Toast.makeText(v.getContext(), curName, Toast.LENGTH_SHORT).show();
-//
-
-//
-//
-////                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-////                    @Override
-////                    public boolean onLongClick(View v) {
-////                        remove(holder.getAdapterPosition());
-////                        return true;
-////                    }
-////                });
-//
-//            }
-//        });
-
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                picListerner.onPicClicked(holder, position, arrayList);
+            }
+        });
     }
 
 

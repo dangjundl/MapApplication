@@ -7,88 +7,89 @@
     <!--필요에따라 버튼에 애니메이션 넣기-->
 
     <Button
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
         android:id="@+id/zoomlevel1"
-        android:layout_alignParentLeft="true"
         android:layout_width="30dp"
         android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:text="1" />
+
     <Button
         android:id="@+id/zoomlevel2"
-        android:layout_toRightOf="@+id/zoomlevel1"
-        android:layout_marginTop="10dp"
         android:layout_width="30dp"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/zoomlevel1"
         android:text="2" />
 
     <Button
         android:id="@+id/zoomlevel3"
-        android:layout_toRightOf="@+id/zoomlevel2"
-        android:layout_marginTop="10dp"
         android:layout_width="30dp"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/zoomlevel2"
         android:text="3" />
 
     <Button
         android:id="@+id/zoomlevel4"
-        android:layout_toRightOf="@+id/zoomlevel3"
-        android:layout_marginTop="10dp"
         android:layout_width="30dp"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/zoomlevel3"
         android:text="4" />
 
     <Button
         android:id="@+id/zoomlevel5"
-        android:layout_toRightOf="@+id/zoomlevel4"
-        android:layout_marginTop="10dp"
         android:layout_width="30dp"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/zoomlevel4"
         android:text="5" />
 
     <Button
         android:id="@+id/display_move_on"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="화면 이동"/>
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="화면 이동" />
 
     <Button
         android:id="@+id/display_move_off"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/display_move_on"
-        android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="화면 고정"/>
+        android:layout_below="@id/display_move_on"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="화면 고정" />
 
     <Button
         android:id="@+id/display_release"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/display_move_off"
-        android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="release"/>
+        android:layout_below="@id/display_move_off"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="release" />
 
     <Button
         android:id="@+id/distance1"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/display_release"
-        android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="500M"/>
+        android:layout_below="@id/display_release"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="500M" />
 
     <Button
         android:id="@+id/distance2"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/distance1"
-        android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="4000M"/>
+        android:layout_below="@id/distance1"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="4000M" />
 
     <RelativeLayout
         android:id="@+id/map_view"
