@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -46,7 +48,7 @@ import static net.daum.mf.map.api.MapPOIItem.ShowAnimationType.SpringFromGround;
 
 public class MainActivity extends AppCompatActivity implements MapView.POIItemEventListener, MapView.CurrentLocationEventListener, MapView.MapViewEventListener, TiltScrollController.ScrollListener {
 
-    private Button zoombtn1, zoombtn2, zoombtn3, zoombtn4, zoombtn5, display_move, display_stop, release_btn;
+    private Button[] zoombtn;
     private double latitude, longitude, x_location, y_location;
     private boolean display_controll;
     private MapView mapView;
@@ -55,14 +57,16 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     private MapPOIItem[] poiItems;
     private ArrayList<String> pic_data, setName;
     private ArrayList<Double> markers;
-    private Button distance_test, distance_test2;
-    private Boolean distance1, distance2;
+    private Button distance_test, distance_test2, display_move, display_stop, stop_release_btn, move_release_btn, display_stop_img;
+    private Boolean distance1, distance2, relase;
     private ArrayList<MapPOIItem> marker;
     private ArrayList<MapPoint> mapPoint;
     private ArrayList<mapData> mapDatas;
     private ArrayList<Piclist_data> imglist;
     private int select_circle;
     private Bitmap mbitmap, resize_bitmap;
+    private int SelectNum;
+    private Animation fadeInAnim, fadeOutAnim;
 
 
     @Override
@@ -83,21 +87,32 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         mapDatas = new ArrayList<mapData>();
         imglist = new ArrayList<Piclist_data>();
 
+        //화면고정,이동 해제에 따라서 트래킹모드 제어
+        relase = false;
+
+        fadeInAnim = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+
         mTiltScrollController = new TiltScrollController(getApplicationContext(), this);
 
         distance1 = true;
         distance2 = true;
         display_controll = false;
 
-        zoombtn1 = findViewById(R.id.zoomlevel1);
-        zoombtn2 = findViewById(R.id.zoomlevel2);
-        zoombtn3 = findViewById(R.id.zoomlevel3);
-        zoombtn4 = findViewById(R.id.zoomlevel4);
-        zoombtn5 = findViewById(R.id.zoomlevel5);
+        zoombtn = new Button[5];
+        int[] zoom = {5, 4, 3, 2, 1};
+        Integer[] Rid_button = {R.id.zoomlevel1, R.id.zoomlevel2, R.id.zoomlevel3, R.id.zoomlevel4, R.id.zoomlevel5};
+
+        for (int i = 0; i < zoombtn.length; i++) {
+            zoombtn[i] = (Button) findViewById(Rid_button[i]);
+        }
 
         display_move = findViewById(R.id.display_move_on);
-        display_stop = findViewById(R.id.display_move_off);
-        release_btn = findViewById(R.id.display_release);
+        display_stop = findViewById(R.id.display_stop_on);
+        display_stop_img = findViewById(R.id.display_lock_img);
+
+        stop_release_btn = findViewById(R.id.display_stop_off);
+        move_release_btn = findViewById(R.id.display_move_off);
 
         distance_test = findViewById(R.id.distance1);
         distance_test2 = findViewById(R.id.distance2);
@@ -186,8 +201,6 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
 
                             mapDatas.get(finalI).setBitmap_Marker(resize_bitmap);
 
-                            Log.d("정상작동?", "run: 비트맵값 " + mapDatas.get(finalI).getBitmap_Marker());
-
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
 
@@ -200,13 +213,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 mThread.start(); // Thread 실행
 
                 try {
-                    // 메인 Thread는 별도의 작업 Thread가 작업을 완료할 때까지 대기해야한다
-                    // join()를 호출하여 별도의 작업 Thread가 종료될 때까지 메인 Thread가 기다리게 한다
                     mThread.join();
-                    Log.d("dsd", "onCreate: 비트맵값 정확히 가져온거야? : " + mbitmap);
-
-                    // 작업 Thread에서 이미지를 불러오는 작업을 완료한 뒤
-                    // UI 작업을 할 수 있는 메인 Thread에서 ImageView에 이미지를 지정한다
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -215,7 +222,23 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         }
         drawMarker();
 
+        /* zoomlevel controll */
+        for (int i = 0; i < zoombtn.length; i++) {
+            final int INDEX;
+            INDEX = i;
 
+            zoombtn[INDEX].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mapView.setZoomLevel(zoom[INDEX], true);
+                    SelectNone(SelectNum);
+                    zoomSelect(INDEX);
+                    SelectNum = INDEX;
+                }
+            });
+        }
+
+        //반경 50 미터
         distance_test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                         if (markers.get(i) < 500) {
                             poiItems[i].setItemName(setName.get(i));
                             poiItems[i].setShowAnimationType(SpringFromGround);
+                            poiItems[i].setShowCalloutBalloonOnTouch(false);
 
                             Log.d("daeng", "onClick: " + poiItems[i].getItemName());
                         } else {
@@ -237,11 +261,11 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
 
                     distance1 = false;
 //                    select_circle = 1;
-
                 }
             }
         });
 
+        //반경 4천미터
         distance_test2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -252,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                     for (int i = 0; i < poiItems.length; i++) {
                         if (markers.get(i) < 4000) {
                             poiItems[i].setItemName(setName.get(i));
+                            poiItems[i].setShowCalloutBalloonOnTouch(false);
                             poiItems[i].setShowAnimationType(SpringFromGround);
                         } else {
                             poiItems[i].setItemName(null);
@@ -265,89 +290,58 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             }
         });
 
+        //화면 이동
         display_move.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 display_controll = true;
+                relase = true;
+                stopImg_controll(2);
                 tracking_controll(2);
             }
         });
 
+        //화면 고정
         display_stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 display_controll = false;
+                stopImg_controll(1);
                 tracking_controll(2);
             }
         });
-        release_btn.setOnClickListener(new View.OnClickListener() {
+
+        //화면 이동 해제
+        move_release_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 display_controll = false;
-                tracking_controll(1);
-
+                relase = false;
+                if (display_stop_img.getVisibility() == View.GONE) {
+                    tracking_controll(1);
+                }
             }
         });
 
-
-        zoombtn1.setOnClickListener(new View.OnClickListener() {
+        //화면 고정 해제
+        stop_release_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mapView.setZoomLevel(5, true);
-                Toast.makeText(getApplicationContext(), "level 1", Toast.LENGTH_SHORT).show();
-            }
-        });
-        zoombtn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapView.setZoomLevel(4, true);
-                Toast.makeText(getApplicationContext(), "level 2", Toast.LENGTH_SHORT).show();
+                stopImg_controll(2);
+                display_controll = true;
+                if (relase == false) {
+                    display_controll = false;
+                    tracking_controll(1);
+                }
 
             }
         });
-        zoombtn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapView.setZoomLevel(3, true);
-                Toast.makeText(getApplicationContext(), "level 3", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        zoombtn4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapView.setZoomLevel(2, true);
-                Toast.makeText(getApplicationContext(), "level 4", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        zoombtn5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapView.setZoomLevel(1, true);
-                Toast.makeText(getApplicationContext(), "level 5", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
     }
 
     //사용자가 MapView 에 등록된 POI Item 아이콘(마커)를 터치한 경우 호출된다.
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
-        Log.d("댕댕개발자", "마커 클릭");
-    }
-
-    @Override
-    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
-
-    }
-
-    @Override
-    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
-
         imglist.removeAll(imglist);
-
         for (int i = 0; i < poiItems.length; i++) {
             if (mapPOIItem.getItemName().equals(poiItems[i].getItemName())) {
                 String piclist = mapDatas.get(i).getImg_path();
@@ -371,6 +365,17 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 }
             }
         }
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+
+
     }
 
 
@@ -458,10 +463,8 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             double my_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
 
             mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(my_latitude - y_location, my_longitude + x_location), true);
-
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -505,8 +508,6 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 double map_tests = poiItems[i].getMapPoint().getMapPointGeoCoord().longitude;
                 markers.add(i, DistanceByDegreeAndroid(latitude, longitude, map_test, map_tests));
 
-                Log.d("result", "marker_distance: " + markers.get(i) + "m");
-
             }
 
         int i = Integer.parseInt(String.valueOf(Math.round(markers.get(0))));
@@ -535,11 +536,15 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 Color.argb(128, 255, 0, 0), // strokeColor
                 Color.argb(0, 0, 0, 0) // fillColor
         );
-        circle1.setTag(1234);
+        circle1.setTag(1);
+
         drawMarker();
         mapView.addCircle(circle1);
+        Log.d("서클값", "drawcircle: 요건머지"+ mapView.findCircleByTag(1).getRadius());
+
     }
 
+    /* 사진이 여러장일경우 점으로 표시 , 한장일경우 이미지로 표시 */
     private void drawMarker() {
 
         poiItems = new MapPOIItem[setName.size()];
@@ -556,11 +561,47 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             } else {
                 marker.get(i).setTag(i);
                 marker.get(i).setMapPoint(mapPoint.get(i));
-                marker.get(i).setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
                 marker.get(i).setMarkerType(MapPOIItem.MarkerType.CustomImage);
                 marker.get(i).setCustomImageBitmap(mapDatas.get(i).getBitmap_Marker());
-//            marker.get(i).setCustomImageAnchor(0.5f, 1.0f);
+                marker.get(i).setCustomImageAutoscale(false);
+//                marker.get(i).setCustomImageAnchor(0.5f, 1.0f);
                 poiItems[i] = marker.get(i);
+            }
+        }
+    }
+
+
+    private void zoomSelect(int zoomlevel) {
+
+        for (int i = 0; i < zoombtn.length; i++) {
+            if (zoomlevel == i) {
+                zoombtn[i].setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_border_check));
+            }
+        }
+    }
+
+    private void SelectNone(int zoomlevel) {
+
+        for (int i = 0; i < zoombtn.length; i++) {
+            if (zoomlevel == i) {
+                zoombtn[i].setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_border));
+            }
+        }
+    }
+
+    //화면 고정할때 나오는 이미지 제어
+    private void stopImg_controll(int num) {
+
+        if (num == 1) {
+            if (display_stop_img.getVisibility() == View.GONE) {
+                display_stop_img.setVisibility(View.VISIBLE);
+                display_stop_img.startAnimation(fadeInAnim);
+            }
+
+        } else {
+            if (display_stop_img.getVisibility() == View.VISIBLE) {
+                display_stop_img.startAnimation(fadeOutAnim);
+                display_stop_img.setVisibility(View.GONE);
             }
         }
     }

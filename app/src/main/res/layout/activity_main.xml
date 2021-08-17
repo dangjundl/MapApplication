@@ -9,42 +9,51 @@
     <Button
         android:id="@+id/zoomlevel1"
         android:layout_width="30dp"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/circle_border"
         android:text="1" />
 
     <Button
         android:id="@+id/zoomlevel2"
         android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/zoomlevel1"
+        android:background="@drawable/circle_border"
         android:text="2" />
 
     <Button
         android:id="@+id/zoomlevel3"
         android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/zoomlevel2"
+        android:background="@drawable/circle_border"
         android:text="3" />
 
     <Button
         android:id="@+id/zoomlevel4"
         android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/zoomlevel3"
+        android:background="@drawable/circle_border"
         android:text="4" />
 
     <Button
         android:id="@+id/zoomlevel5"
         android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/zoomlevel4"
+        android:background="@drawable/circle_border"
         android:text="5" />
 
     <Button
@@ -62,22 +71,33 @@
         android:layout_below="@id/display_move_on"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
-        android:text="화면 고정" />
+        android:text="화면 이동 끄기" />
 
     <Button
-        android:id="@+id/display_release"
+        android:id="@+id/display_stop_on"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/display_move_off"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
-        android:text="release" />
+        android:text="화면 고정" />
+
+
+    <Button
+        android:id="@+id/display_stop_off"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/display_stop_on"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="화면 고정 해제" />
+
 
     <Button
         android:id="@+id/distance1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/display_release"
+        android:layout_below="@id/display_stop_off"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:text="500M" />
@@ -90,6 +110,17 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:text="4000M" />
+
+    <Button
+        android:id="@+id/display_lock_img"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:background="@drawable/screen_lock_icon" />
+
 
     <RelativeLayout
         android:id="@+id/map_view"
