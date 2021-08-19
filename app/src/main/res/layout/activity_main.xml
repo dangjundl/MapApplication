@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/maplayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -58,46 +59,19 @@
 
     <Button
         android:id="@+id/display_move_on"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:text="화면 이동" />
-
-    <Button
-        android:id="@+id/display_move_off"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/display_move_on"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:text="화면 이동 끄기" />
-
-    <Button
-        android:id="@+id/display_stop_on"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/display_move_off"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:text="화면 고정" />
-
-
-    <Button
-        android:id="@+id/display_stop_off"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/display_stop_on"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:text="화면 고정 해제" />
+        android:background="@drawable/displaycontroll_off"
+        android:layout_marginRight="20dp"/>
 
 
     <Button
         android:id="@+id/distance1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/display_stop_off"
+        android:layout_below="@id/display_move_on"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:text="500M" />
@@ -112,6 +86,15 @@
         android:text="4000M" />
 
     <Button
+        android:id="@+id/tracking_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/distance2"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="트래킹on" />
+
+    <Button
         android:id="@+id/display_lock_img"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -121,10 +104,135 @@
         android:visibility="gone"
         android:background="@drawable/screen_lock_icon" />
 
+    <Button
+        android:layout_centerHorizontal="true"
+        android:id="@+id/up"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="@drawable/up_icon"/>
+    <Button
+        android:layout_centerVertical="true"
+        android:id="@+id/down"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="@drawable/down_icon"/>
+    <Button
+        android:id="@+id/left"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12dp"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/left_icon"/>
+    <Button
+        android:id="@+id/right"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/right_icon"/>
+
+
 
     <RelativeLayout
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/zoomlevel_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="줌레벨 1"/>
+
+    <TextView
+        android:id="@+id/zoomlevel_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="줌레벨 2"/>
+
+    <TextView
+        android:id="@+id/zoomlevel_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="줌레벨 3"/>
+
+    <TextView
+        android:id="@+id/zoomlevel_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="줌레벨 4"/>
+
+    <TextView
+        android:id="@+id/zoomlevel_5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="줌레벨 5"/>
+
+
+    <TextView
+        android:id="@+id/display_lock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="화면 고정"/>
+
+    <TextView
+        android:id="@+id/display_lock_off"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="화면 고정 해제"/>
+
+    <TextView
+        android:id="@+id/displaySensor_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="화면 이동"/>
+
+    <TextView
+        android:id="@+id/displaySensor_off"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="화면 이동 해제"/>
+
+
+    <TextView
+        android:id="@+id/displayMoveUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="위"/>
+
+    <TextView
+        android:id="@+id/displayMoveDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="아래"/>
+
+    <TextView
+        android:id="@+id/displayMoveRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="오른쪽"/>
+
+    <TextView
+        android:id="@+id/displayMoveLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="왼쪽"/>
+
 
 </RelativeLayout>

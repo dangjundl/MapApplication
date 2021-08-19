@@ -1,20 +1,20 @@
 package com.peng.plant.myapplication;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,26 +22,22 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import net.daum.mf.map.api.CameraUpdate;
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
-import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static net.daum.mf.map.api.MapPOIItem.ShowAnimationType.SpringFromGround;
 
@@ -57,18 +53,24 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     private MapPOIItem[] poiItems;
     private ArrayList<String> pic_data, setName;
     private ArrayList<Double> markers;
-    private Button distance_test, distance_test2, display_move, display_stop, stop_release_btn, move_release_btn, display_stop_img;
+    private Button distance_test, distance_test2, display_move, display_stop, stop_release_btn, display_stop_img,display_stop_img2,leftMove,rightMove,upMove,downMove;
     private Boolean distance1, distance2, relase;
     private ArrayList<MapPOIItem> marker;
-    private ArrayList<MapPoint> mapPoint;
+    private ArrayList<MapPoint> CustomMapPoint;
     private ArrayList<mapData> mapDatas;
     private ArrayList<Piclist_data> imglist;
-    private int select_circle;
+    int[] idNum;
+//    select_circle
     private Bitmap mbitmap, resize_bitmap;
-    private int SelectNum;
+    private int SelectNum,zoomNum;
     private Animation fadeInAnim, fadeOutAnim;
+    private TextView zoombtn1,zoombtn2,zoombtn3,zoombtn4,zoombtn5,display_lockOn,display_lockOff,Sensor_on,Sensor_off,moveUp,moveDown,moveLeft,moveRight;
+    private RelativeLayout container;
+    TextView a;
 
 
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +82,15 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         /************************************
          findviewbyidId 부분은 nitview 함수로 정리
          ************************************/
+        container = findViewById(R.id.maplayout);
+
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+//
+//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+
+
 
         setName = new ArrayList<String>();//마커에 지정할 이름
         pic_data = new ArrayList<String>();//이미지 데이터값
@@ -108,11 +119,33 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         }
 
         display_move = findViewById(R.id.display_move_on);
-        display_stop = findViewById(R.id.display_stop_on);
         display_stop_img = findViewById(R.id.display_lock_img);
+        display_stop_img2 = findViewById(R.id.tracking_on);
 
-        stop_release_btn = findViewById(R.id.display_stop_off);
-        move_release_btn = findViewById(R.id.display_move_off);
+        zoombtn1 = findViewById(R.id.zoomlevel_1);
+        zoombtn2 = findViewById(R.id.zoomlevel_2);
+        zoombtn3 = findViewById(R.id.zoomlevel_3);
+        zoombtn4 = findViewById(R.id.zoomlevel_4);
+        zoombtn5 = findViewById(R.id.zoomlevel_5);
+
+        display_lockOn = findViewById(R.id.display_lock);
+        display_lockOff = findViewById(R.id.display_lock_off);
+
+        Sensor_on = findViewById(R.id.displaySensor_on);
+        Sensor_off = findViewById(R.id.displaySensor_off);
+
+
+        moveUp = findViewById(R.id.displayMoveUp);
+        moveDown = findViewById(R.id.displayMoveDown);
+        moveLeft = findViewById(R.id.displayMoveLeft);
+        moveRight = findViewById(R.id.displayMoveRight);
+
+
+
+        leftMove = findViewById(R.id.left);
+        rightMove = findViewById(R.id.right);
+        upMove = findViewById(R.id.up);
+        downMove = findViewById(R.id.down);
 
         distance_test = findViewById(R.id.distance1);
         distance_test2 = findViewById(R.id.distance2);
@@ -120,28 +153,29 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         //마커 목록
         marker = new ArrayList<MapPOIItem>();
         //마커가 화면에 표시될 좌표 목록
-        mapPoint = new ArrayList<MapPoint>();
+        CustomMapPoint = new ArrayList<MapPoint>();
 
         //사용자가 입력한 사진데이터 , 이름데이터를 가져와서 각각 setName , pic_data에 넣어줌 -> 요부분은 내생각에 mapData를 이용해야 하지않을까
 
-        setName.add(0, "(주)와트");
+        setName.add(0, "와트");
         setName.add(1, "서울");
-        setName.add(2, "하아하아아");
+        setName.add(2, "선일테크노피아");
 
         //사진 데이터
         pic_data.add("https://cdn.kado.net/news/photo/202004/1018454_448598_1539.jpg,http://image.canon-ci.co.kr/pds/editor/images/000062/20180404151051869_70ODYPB7.png,http://image.canon-ci.co.kr/pds/editor/images/000096/20190611140954550_350LWRGN.jpg");
         pic_data.add("https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/mt/2021/07/11/mt_1625955064430_659172_0.jpg");
         pic_data.add("https://s3.ap-northeast-2.amazonaws.com/st.dangidata/hobby_conects/data/adm/lecture_manage/curriculum/094107fc03e8452647ded805edb0f8c4.png");
 
+
         mapView = new MapView(this);
-        test2 = MapPoint.mapPointWithGeoCoord(37.51019, 127.03309);
+        test2 = MapPoint.mapPointWithGeoCoord(37.43232, 127.17854);
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
         mapView.setMapCenterPointAndZoomLevel(test2, 5, true);
         mapViewContainer.addView(mapView);
 
         for (int i = 0; i < setName.size(); i++) {
             marker.add(i, new MapPOIItem());
-            mapPoint.add(i, MapPoint.mapPointWithGeoCoord((37.43207 - (i * 0.01)), ((127.17650 - (i * 0.01)))));
+            CustomMapPoint.add(i, MapPoint.mapPointWithGeoCoord((37.43207 - (i * 0.01)), ((127.17650 - (i * 0.01)))));
         }
 
         Log.d("마커사이즈", "onCreate: " + marker.size());
@@ -149,23 +183,72 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
 //        mapPoint.add(0,MapPoint.mapPointWithGeoCoord(37.43207,27.17650));
 //        MapPoint mapPoints = MapPoint.mapPointWithGeoCoord(37.43207, 127.17650);
 
+        Log.d("사이즈", "onCreate: setname"+setName.size());
+//        for(int i=0; i<setName.size(); i++) {
+
+        idNum = new int[setName.size()];
+//        (float) 0.2645833333333
+         for(int i=0; i<setName.size(); i++) {
+             a = new TextView(this);
+             a.setId(i);
+             a.setText(setName.get(i));
+             a.setTextSize(100);
+             idNum[i] = i;
+             RelativeLayout ll = new RelativeLayout(this);
+             final int position = i;
+
+             int finalI = i;
+             a.setOnClickListener(new View.OnClickListener() {
+
+                 public void onClick(View v) {
+
+                     ;
+                     Log.d("log", "position :" + a.getText().toString());
+
+                     if(a.getId()==position){
+                     if(poiItems[finalI].getItemName().equals(a.getText().toString())) {
+                         Toast.makeText(getApplicationContext(), "클릭한 position:" + position, Toast.LENGTH_LONG).show();
+                         Toast.makeText(getApplicationContext(), "클릭한 position:" + a.getText().toString(), Toast.LENGTH_LONG).show();
+
+                     }
+                 }
+                 }
+             });
+
+
+
+             //layout_width, layout_height, gravity 설정
+//             a.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+             ll.addView(a);
+             //부모 뷰에 추가
+             container.addView(ll);
+
+
+         }
+//        }
+        //음성 입력 컨트롤
+        voiceControll();
+
         mapView.setPOIItemEventListener(this);
         mapView.setCurrentLocationEventListener(this);
         mapView.setMapViewEventListener(this);
         mapView.getMapCenterPoint();
         mapView.setMapTilePersistentCacheEnabled(true);
-        tracking_controll(1);
+        mapView.setHDMapTileEnabled(false);
+        tracking_controls(1);
 
-
+        /* 객체 배열안에 마커에 지정되어있는 이름의 숫자만큼 사진 데이터, 맵포인트 값을 넣어줌 */
         for (int i = 0; i < setName.size(); i++) {
             mapData mData = new mapData();
             mData.setName(setName.get(i));
             mData.setImg_path(pic_data.get(i));
-            mData.setLatitude((37.43207 - (i * 0.01)));
-            mData.setLongitude((127.17650 - (i * 0.01)));
+            mData.setLatitude(CustomMapPoint.get(i).getMapPointGeoCoord().latitude);
+            mData.setLongitude(CustomMapPoint.get(i).getMapPointGeoCoord().longitude);
             mapDatas.add(mData);
         }
 
+        /* 이미지가 여러장일 경우 split으로 imglist에 담기 */
         for (int i = 0; i < mapDatas.size(); i++) {
             String piclist = mapDatas.get(i).getImg_path();
             String[] img = piclist.split(",");
@@ -178,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             }
         }
 
+        /* url이미지를 bitmap으로 변환시켜서 지도위에 띄우기 */
         for (int i = 0; i < mapDatas.size(); i++) {
             String piclist = mapDatas.get(i).getImg_path();
             String[] img = piclist.split(",");
@@ -222,6 +306,8 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         }
         drawMarker();
 
+
+
         /* zoomlevel controll */
         for (int i = 0; i < zoombtn.length; i++) {
             final int INDEX;
@@ -237,6 +323,16 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 }
             });
         }
+
+        display_stop_img2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Toast.makeText(getApplicationContext(), "트래킹모드 시작", Toast.LENGTH_SHORT).show();
+                tracking_controls(1);
+
+            }
+        });
+
 
         //반경 50 미터
         distance_test.setOnClickListener(new View.OnClickListener() {
@@ -262,6 +358,11 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                     distance1 = false;
 //                    select_circle = 1;
                 }
+                poiItems[0].setItemName(setName.get(0));
+                poiItems[0].setShowAnimationType(SpringFromGround);
+                mapView.addPOIItems(poiItems);
+
+
             }
         });
 
@@ -290,53 +391,9 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             }
         });
 
-        //화면 이동
-        display_move.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                display_controll = true;
-                relase = true;
-                stopImg_controll(2);
-                tracking_controll(2);
-            }
-        });
-
-        //화면 고정
-        display_stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                display_controll = false;
-                stopImg_controll(1);
-                tracking_controll(2);
-            }
-        });
-
-        //화면 이동 해제
-        move_release_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                display_controll = false;
-                relase = false;
-                if (display_stop_img.getVisibility() == View.GONE) {
-                    tracking_controll(1);
-                }
-            }
-        });
-
-        //화면 고정 해제
-        stop_release_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopImg_controll(2);
-                display_controll = true;
-                if (relase == false) {
-                    display_controll = false;
-                    tracking_controll(1);
-                }
-
-            }
-        });
     }
+
+
 
     //사용자가 MapView 에 등록된 POI Item 아이콘(마커)를 터치한 경우 호출된다.
     @Override
@@ -344,8 +401,8 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         imglist.removeAll(imglist);
         for (int i = 0; i < poiItems.length; i++) {
             if (mapPOIItem.getItemName().equals(poiItems[i].getItemName())) {
-                String piclist = mapDatas.get(i).getImg_path();
-                String[] img = piclist.split(",");
+                String pictures = mapDatas.get(i).getImg_path();
+                String[] img = pictures.split(",");
                 for (int j = 0; j < img.length; j++) {
                     if (img.length > 1) {
                         Piclist_data mPicdata = new Piclist_data();
@@ -355,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 }
                 if (img.length == 1) {
                     Intent intent = new Intent(MainActivity.this, imageView.class);
-                    intent.putExtra("image_data", pic_data.get(i));
+                    intent.putExtra("image_data", mapDatas.get(i).getImg_path());
                     startActivity(intent);
                 } else {
                     Intent intents = new Intent(MainActivity.this, DisplayImage.class);
@@ -454,16 +511,18 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
 
     @Override
     public void onTilt(float x, float y) {
-
         if (display_controll) {
-            x_location = x / 1000;
-            y_location = y / 1000;
+            zoom_sensor(x,y);
 
             double my_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
             double my_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
 
-            mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(my_latitude - y_location, my_longitude + x_location), true);
+            Log.d("mappoint", "onTilt: 좌우" + my_latitude);
+            Log.d("mappoint", "onTilt: 좌우" + my_longitude);
+
+            mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(my_latitude - y_location, my_longitude + x_location), false);
         }
+
     }
 
     @Override
@@ -473,6 +532,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     }
 
     //위치 권한 허용
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void permission_check() {
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_DENIED) { //포그라운드 위치 권한 확인
@@ -517,9 +577,9 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
 
     }
 
-    private void tracking_controll(int controll) {
+    private void tracking_controls(int controls) {
 
-        if (controll == 1) {
+        if (controls == 1) {
             mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
         } else {
             mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
@@ -554,13 +614,13 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             String[] img = piclist.split(",");
             if (img.length > 1) {
                 marker.get(i).setTag(i);
-                marker.get(i).setMapPoint(mapPoint.get(i));
+                marker.get(i).setMapPoint(CustomMapPoint.get(i));
                 marker.get(i).setMarkerType(MapPOIItem.MarkerType.BluePin);
                 marker.get(i).setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
                 poiItems[i] = marker.get(i);
             } else {
                 marker.get(i).setTag(i);
-                marker.get(i).setMapPoint(mapPoint.get(i));
+                marker.get(i).setMapPoint(CustomMapPoint.get(i));
                 marker.get(i).setMarkerType(MapPOIItem.MarkerType.CustomImage);
                 marker.get(i).setCustomImageBitmap(mapDatas.get(i).getBitmap_Marker());
                 marker.get(i).setCustomImageAutoscale(false);
@@ -572,6 +632,8 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
 
 
     private void zoomSelect(int zoomlevel) {
+
+        zoomNum = zoomlevel;
 
         for (int i = 0; i < zoombtn.length; i++) {
             if (zoomlevel == i) {
@@ -606,7 +668,208 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         }
     }
 
+    private View.OnClickListener mapControill = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+
+                case R.id.zoomlevel_1:
+                    mapView.setZoomLevel(5, true);
+                    SelectNone(SelectNum);
+                    zoomSelect(0);
+                    SelectNum = 0;
+                    break;
+
+                case R.id.zoomlevel_2:
+                    mapView.setZoomLevel(4, true);
+                    SelectNone(SelectNum);
+                    zoomSelect(1);
+                    SelectNum = 1;
+                    break;
+
+                case R.id.zoomlevel_3:
+                    mapView.setZoomLevel(3, true);
+                    SelectNone(SelectNum);
+                    zoomSelect(2);
+                    SelectNum = 2;
+                    break;
+
+                case R.id.zoomlevel_4:
+                    mapView.setZoomLevel(2, true);
+                    SelectNone(SelectNum);
+                    zoomSelect(3);
+                    SelectNum = 3;
+                    break;
+                case R.id.display_lock:
+                    display_controll = false;
+                    stopImg_controll(1);
+                    tracking_controls(2);
+                    break;
+
+                case R.id.display_lock_off:
+                    stopImg_controll(2);
+                    display_controll = true;
+                    if (relase == false) {
+                        display_controll = false;
+                        tracking_controls(1);
+                    }
+                    break;
+
+                case R.id.displaySensor_on:
+                    display_controll = true;
+                    relase = true;
+                    stopImg_controll(2);
+                    tracking_controls(2);
+                    display_move.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.displaycontroll_on));
+                    break;
+
+                case R.id.displaySensor_off:
+                    display_controll = false;
+                    relase = false;
+                    if (display_stop_img.getVisibility() == View.GONE) {
+                        tracking_controls(1);
+                    }
+                    display_move.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.displaycontroll_off));
+                    break;
+
+                case R.id.displayMoveUp:
+                    mapMoveControll(1);
+
+                    break;
+
+                case R.id.displayMoveDown:
+                    mapMoveControll(2);
+
+                    break;
+
+
+                case R.id.displayMoveRight:
+                    mapMoveControll(3);
+
+                    break;
+
+                case R.id.displayMoveLeft:
+                    mapMoveControll(4);
+
+                    break;
+                case 0:
+                        Intent intent = new Intent(MainActivity.this, imageView.class);
+                        intent.putExtra("image_data", mapDatas.get(1).getImg_path());
+                        startActivity(intent);
+                        break;
+
+//                case 1:
+//                    Intent intent = new Intent(MainActivity.this, imageView.class);
+//                    intent.putExtra("image_data", mapDatas.get(1).getImg_path());
+//                    startActivity(intent);
+//                    break;
+//
+//                case 0:
+//                    Intent intent = new Intent(MainActivity.this, imageView.class);
+//                    intent.putExtra("image_data", mapDatas.get(1).getImg_path());
+//                    startActivity(intent);
+//                    break;
+
+
+                        }
+
+
+        }
+    };
+
+    private void voiceControll(){
+
+        zoombtn1.setOnClickListener(mapControill);
+        zoombtn2.setOnClickListener(mapControill);
+        zoombtn3.setOnClickListener(mapControill);
+        zoombtn4.setOnClickListener(mapControill);
+        zoombtn5.setOnClickListener(mapControill);
+
+        display_lockOn.setOnClickListener(mapControill);
+        display_lockOff.setOnClickListener(mapControill);
+
+        Sensor_on.setOnClickListener(mapControill);
+        Sensor_off.setOnClickListener(mapControill);
+
+        moveUp.setOnClickListener(mapControill);
+        moveDown.setOnClickListener(mapControill);
+        moveLeft.setOnClickListener(mapControill);
+        moveRight.setOnClickListener(mapControill);
+        a.setOnClickListener(mapControill);
+    }
+
+
+    private void zoom_sensor(float x , float y){
+        x_location = x / ((zoomNum+1)*1000);
+        y_location = y / ((zoomNum+1)*1000);
+
+    }
+
+    private void mapMoveControll(int location){
+
+        double my_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
+        double my_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
+
+        if(display_controll!=true) {
+
+            switch (location) {
+                case 1:
+                    for (int i = 0; i < 10; i++) {
+                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(my_latitude + 0.010, my_longitude), true);
+                        upMove.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.up_click));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                upMove.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.up_icon));
+                            }
+                        }, 300);
+
+                    }
+                    break;
+
+                case 2:
+                    for (int i = 0; i < 10; i++) {
+                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(my_latitude - 0.010, my_longitude), true);
+                        downMove.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.down_click));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                downMove.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.down_icon));
+                            }
+                        }, 300);
+
+                    }
+                    break;
+                case 3:
+                    for (int i = 0; i < 10; i++) {
+                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(my_latitude, my_longitude + 0.010), true);
+                        rightMove.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.right_click));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                rightMove.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.right_icon));
+                            }
+                        }, 300);
+                    }
+                    break;
+                case 4:
+                    for (int i = 0; i < 10; i++) {
+                        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(my_latitude, my_longitude - 0.010), true);
+                        leftMove.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.left_click));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                leftMove.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.left_icon));
+                            }
+                        }, 300);
+                    }
+                    break;
+            }
+        }
+    }
 }
+
+
 
 
 /*******************************************************************************************************************************************************
