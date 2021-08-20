@@ -53,21 +53,21 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     private MapPOIItem[] poiItems;
     private ArrayList<String> pic_data, setName;
     private ArrayList<Double> markers;
-    private Button distance_test, distance_test2, display_move, display_stop, stop_release_btn, display_stop_img,display_stop_img2,leftMove,rightMove,upMove,downMove;
-    private Boolean distance1, distance2, relase;
+    private Button distance, display_move, display_stop_img, mylocation, leftMove, rightMove, upMove, downMove;
+    private Boolean distance1, distance2, relase, locationControll;
     private ArrayList<MapPOIItem> marker;
     private ArrayList<MapPoint> CustomMapPoint;
     private ArrayList<mapData> mapDatas;
     private ArrayList<Piclist_data> imglist;
     int[] idNum;
-//    select_circle
+    //    select_circle
     private Bitmap mbitmap, resize_bitmap;
-    private int SelectNum,zoomNum;
+    private int SelectNum, zoomNum;
     private Animation fadeInAnim, fadeOutAnim;
-    private TextView zoombtn1,zoombtn2,zoombtn3,zoombtn4,zoombtn5,display_lockOn,display_lockOff,Sensor_on,Sensor_off,moveUp,moveDown,moveLeft,moveRight;
+    private TextView zoombtn1, zoombtn2, zoombtn3, zoombtn4, zoombtn5, display_lockOn, display_lockOff, Sensor_on, Sensor_off, moveUp, moveDown, moveLeft, moveRight,
+            circle1, circle2, circle3, remove_circle, locationMove, locationStop;
     private RelativeLayout container;
-    TextView a;
-
+    TextView[] createText;
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -82,33 +82,35 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         /************************************
          findviewbyidId 부분은 nitview 함수로 정리
          ************************************/
-        container = findViewById(R.id.maplayout);
 
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-//
-//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-
-
-
-
+        /*어레이리스트 */
         setName = new ArrayList<String>();//마커에 지정할 이름
         pic_data = new ArrayList<String>();//이미지 데이터값
         markers = new ArrayList<Double>();//내위치에서 마커까지의 거리
         mapDatas = new ArrayList<mapData>();
         imglist = new ArrayList<Piclist_data>();
+        marker = new ArrayList<MapPOIItem>();//마커 목록
+        ArrayList<String> test = new ArrayList<String>();//마커 목록
 
-        //화면고정,이동 해제에 따라서 트래킹모드 제어
-        relase = false;
+        CustomMapPoint = new ArrayList<MapPoint>();//마커가 화면에 표시될 좌표 목록
+        /*어레이리스트 */
 
+
+        /*애니메이션 */
         fadeInAnim = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        /*애니메이션 */
 
-        mTiltScrollController = new TiltScrollController(getApplicationContext(), this);
 
+        /*bloean */
         distance1 = true;
         distance2 = true;
         display_controll = false;
+        locationControll = false;
+        relase = false;
+        /*bloean */
+
+        mTiltScrollController = new TiltScrollController(getApplicationContext(), this);
 
         zoombtn = new Button[5];
         int[] zoom = {5, 4, 3, 2, 1};
@@ -118,9 +120,10 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             zoombtn[i] = (Button) findViewById(Rid_button[i]);
         }
 
+
         display_move = findViewById(R.id.display_move_on);
         display_stop_img = findViewById(R.id.display_lock_img);
-        display_stop_img2 = findViewById(R.id.tracking_on);
+        mylocation = findViewById(R.id.displayLocation);
 
         zoombtn1 = findViewById(R.id.zoomlevel_1);
         zoombtn2 = findViewById(R.id.zoomlevel_2);
@@ -140,30 +143,35 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         moveLeft = findViewById(R.id.displayMoveLeft);
         moveRight = findViewById(R.id.displayMoveRight);
 
-
-
         leftMove = findViewById(R.id.left);
         rightMove = findViewById(R.id.right);
         upMove = findViewById(R.id.up);
         downMove = findViewById(R.id.down);
 
-        distance_test = findViewById(R.id.distance1);
-        distance_test2 = findViewById(R.id.distance2);
+        distance = findViewById(R.id.distanceCircle);
 
-        //마커 목록
-        marker = new ArrayList<MapPOIItem>();
-        //마커가 화면에 표시될 좌표 목록
-        CustomMapPoint = new ArrayList<MapPoint>();
+        circle1 = findViewById(R.id.circle_radius_100);
+        circle2 = findViewById(R.id.circle_radius_300);
+        circle3 = findViewById(R.id.circle_radius_500);
+        remove_circle = findViewById(R.id.circle_remove);
 
-        //사용자가 입력한 사진데이터 , 이름데이터를 가져와서 각각 setName , pic_data에 넣어줌 -> 요부분은 내생각에 mapData를 이용해야 하지않을까
+        locationMove = findViewById(R.id.move_location);
+        locationStop = findViewById(R.id.stop_location);
+
+        /************************************
+         findviewbyidId 부분은 nitview 함수로 정리
+         ************************************/
+
+
+        /*이름 , 사진데이터 , 좌표값 담는 부분 */
 
         setName.add(0, "와트");
         setName.add(1, "서울");
-        setName.add(2, "선일테크노피아");
+        setName.add(2, "테스트");
 
         //사진 데이터
-        pic_data.add("https://cdn.kado.net/news/photo/202004/1018454_448598_1539.jpg,http://image.canon-ci.co.kr/pds/editor/images/000062/20180404151051869_70ODYPB7.png,http://image.canon-ci.co.kr/pds/editor/images/000096/20190611140954550_350LWRGN.jpg");
-        pic_data.add("https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/mt/2021/07/11/mt_1625955064430_659172_0.jpg");
+        pic_data.add("https://cdn.kado.net/news/photo/202004/1018454_448598_1539.jpg,https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fldsrd%2FbtrcAbqdHnn%2FkOXiUz2YtJdUi0l2xTctv1%2Fimg.jpg,http://image.canon-ci.co.kr/pds/editor/images/000096/20190611140954550_350LWRGN.jpg");
+        pic_data.add("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fldsrd%2FbtrcAbqdHnn%2FkOXiUz2YtJdUi0l2xTctv1%2Fimg.jpg");
         pic_data.add("https://s3.ap-northeast-2.amazonaws.com/st.dangidata/hobby_conects/data/adm/lecture_manage/curriculum/094107fc03e8452647ded805edb0f8c4.png");
 
 
@@ -178,55 +186,46 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             CustomMapPoint.add(i, MapPoint.mapPointWithGeoCoord((37.43207 - (i * 0.01)), ((127.17650 - (i * 0.01)))));
         }
 
-        Log.d("마커사이즈", "onCreate: " + marker.size());
+        /*이름 , 사진데이터 , 좌표값 담는 부분 */
 
+
+//        어레이리스트에 맵데이터 추가 예시
 //        mapPoint.add(0,MapPoint.mapPointWithGeoCoord(37.43207,27.17650));
 //        MapPoint mapPoints = MapPoint.mapPointWithGeoCoord(37.43207, 127.17650);
 
-        Log.d("사이즈", "onCreate: setname"+setName.size());
-//        for(int i=0; i<setName.size(); i++) {
 
-        idNum = new int[setName.size()];
-//        (float) 0.2645833333333
-         for(int i=0; i<setName.size(); i++) {
-             a = new TextView(this);
-             a.setId(i);
-             a.setText(setName.get(i));
-             a.setTextSize(100);
-             idNum[i] = i;
-             RelativeLayout ll = new RelativeLayout(this);
-             final int position = i;
+        container = findViewById(R.id.maplayout);
+        createText = new TextView[setName.size()];
+        for (int i = 0; i < setName.size(); i++) {
 
-             int finalI = i;
-             a.setOnClickListener(new View.OnClickListener() {
+            createText[i] = new TextView(this);
+            createText[i].setId(i);
+            createText[i].setText(setName.get(i));
+            test.add(i, setName.get(i));
+            createText[i].setTextSize(100);
 
-                 public void onClick(View v) {
+            RelativeLayout ll = new RelativeLayout(this);
 
-                     ;
-                     Log.d("log", "position :" + a.getText().toString());
+            ll.addView(createText[i]);
+            //부모 뷰에 추가
+            container.addView(ll);
 
-                     if(a.getId()==position){
-                     if(poiItems[finalI].getItemName().equals(a.getText().toString())) {
-                         Toast.makeText(getApplicationContext(), "클릭한 position:" + position, Toast.LENGTH_LONG).show();
-                         Toast.makeText(getApplicationContext(), "클릭한 position:" + a.getText().toString(), Toast.LENGTH_LONG).show();
+            final int positions = i;
 
-                     }
-                 }
-                 }
-             });
+            createText[i].setOnClickListener(new View.OnClickListener() {
 
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "나오긴함? : " + positions, Toast.LENGTH_LONG).show();
 
+                    Intent intent = new Intent(MainActivity.this, imageView.class);
+                    intent.putExtra("image_data", mapDatas.get(1).getImg_path());
+                    startActivity(intent);
 
-             //layout_width, layout_height, gravity 설정
-//             a.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                }
+            });
 
-             ll.addView(a);
-             //부모 뷰에 추가
-             container.addView(ll);
+        }
 
-
-         }
-//        }
         //음성 입력 컨트롤
         voiceControll();
 
@@ -248,7 +247,9 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             mapDatas.add(mData);
         }
 
-        /* 이미지가 여러장일 경우 split으로 imglist에 담기 */
+
+        /* 필요없는 부분 , 수정해서쓸 부분 */
+        /*이름 , 사진데이터 , 좌표값 담는 부분 */
         for (int i = 0; i < mapDatas.size(); i++) {
             String piclist = mapDatas.get(i).getImg_path();
             String[] img = piclist.split(",");
@@ -260,6 +261,8 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 }
             }
         }
+        /* 필요없는 부분 , 수정해서쓸 부분 */
+
 
         /* url이미지를 bitmap으로 변환시켜서 지도위에 띄우기 */
         for (int i = 0; i < mapDatas.size(); i++) {
@@ -304,9 +307,6 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                 }
             }
         }
-        drawMarker();
-
-
 
         /* zoomlevel controll */
         for (int i = 0; i < zoombtn.length; i++) {
@@ -324,75 +324,63 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
             });
         }
 
-        display_stop_img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Toast.makeText(getApplicationContext(), "트래킹모드 시작", Toast.LENGTH_SHORT).show();
-                tracking_controls(1);
-
-            }
-        });
-
 
         //반경 50 미터
-        distance_test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (latitude > 0 && longitude > 0 && distance1) {
-                    drawcircle(500);
-                    distance2 = true;
-                    Log.d("daeng", "onClick: marker_show 크기 : " + markers.size());
-                    for (int i = 0; i < poiItems.length; i++) {
-                        if (markers.get(i) < 500) {
-                            poiItems[i].setItemName(setName.get(i));
-                            poiItems[i].setShowAnimationType(SpringFromGround);
-                            poiItems[i].setShowCalloutBalloonOnTouch(false);
-
-                            Log.d("daeng", "onClick: " + poiItems[i].getItemName());
-                        } else {
-                            poiItems[i].setItemName(null);
-                        }
-                    }
-                    mapView.addPOIItems(poiItems);
-
-                    distance1 = false;
-//                    select_circle = 1;
-                }
-                poiItems[0].setItemName(setName.get(0));
-                poiItems[0].setShowAnimationType(SpringFromGround);
-                mapView.addPOIItems(poiItems);
-
-
-            }
-        });
+//        distance_test.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (latitude > 0 && longitude > 0 && distance1) {
+//                    drawcircle(500);
+//                    distance2 = true;
+//                    Log.d("daeng", "onClick: marker_show 크기 : " + markers.size());
+//                    for (int i = 0; i < poiItems.length; i++) {
+//                        if (markers.get(i) < 500) {
+//                            poiItems[i].setItemName(setName.get(i));
+//                            poiItems[i].setShowAnimationType(SpringFromGround);
+//                            poiItems[i].setShowCalloutBalloonOnTouch(false);
+//
+//                            Log.d("daeng", "onClick: " + poiItems[i].getItemName());
+//                        } else {
+//                            poiItems[i].setItemName(null);
+//                        }
+//                    }
+//                    mapView.addPOIItems(poiItems);
+//
+//                    distance1 = false;
+////                    select_circle = 1;
+//                }
+//                poiItems[1].setItemName(setName.get(1));
+//                poiItems[1].setShowAnimationType(SpringFromGround);
+//                mapView.addPOIItems(poiItems);
+//            }
+//        });
 
         //반경 4천미터
-        distance_test2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (latitude > 0 && longitude > 0 && distance2) {
-                    drawcircle(4000);
-                    distance1 = true;
-
-                    for (int i = 0; i < poiItems.length; i++) {
-                        if (markers.get(i) < 4000) {
-                            poiItems[i].setItemName(setName.get(i));
-                            poiItems[i].setShowCalloutBalloonOnTouch(false);
-                            poiItems[i].setShowAnimationType(SpringFromGround);
-                        } else {
-                            poiItems[i].setItemName(null);
-
-                        }
-                    }
-                    mapView.addPOIItems(poiItems);
-                    distance2 = false;
-//                    select_circle = 2;
-                }
-            }
-        });
+//        distance_test2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (latitude > 0 && longitude > 0 && distance2) {
+//                    drawcircle(4000);
+//                    distance1 = true;
+//
+//                    for (int i = 0; i < poiItems.length; i++) {
+//                        if (markers.get(i) < 4000) {
+//                            poiItems[i].setItemName(setName.get(i));
+//                            poiItems[i].setShowCalloutBalloonOnTouch(false);
+//                            poiItems[i].setShowAnimationType(SpringFromGround);
+//                        } else {
+//                            poiItems[i].setItemName(null);
+//
+//                        }
+//                    }
+//                    mapView.addPOIItems(poiItems);
+//                    distance2 = false;
+////                    select_circle = 2;
+//                }
+//            }
+//        });
 
     }
-
 
 
     //사용자가 MapView 에 등록된 POI Item 아이콘(마커)를 터치한 경우 호출된다.
@@ -512,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
     @Override
     public void onTilt(float x, float y) {
         if (display_controll) {
-            zoom_sensor(x,y);
+            zoom_sensor(x, y);
 
             double my_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
             double my_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
@@ -587,20 +575,35 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         }
     }
 
-    private void drawcircle(int radius) {
+    private void drawcircle(int position) {
         mapView.removeAllCircles();
-        mapView.removeAllPOIItems();
-        MapCircle circle1 = new MapCircle(
-                MapPoint.mapPointWithGeoCoord(latitude, longitude), // center
-                radius, // radius
-                Color.argb(128, 255, 0, 0), // strokeColor
-                Color.argb(0, 0, 0, 0) // fillColor
-        );
-        circle1.setTag(1);
+//        mapView.removeAllPOIItems();
 
-        drawMarker();
-        mapView.addCircle(circle1);
-        Log.d("서클값", "drawcircle: 요건머지"+ mapView.findCircleByTag(1).getRadius());
+        int[] radius = {100, 300, 500};
+        MapCircle[] circle = new MapCircle[3];
+
+        double my_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
+        double my_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
+
+
+        for (int i = 0; i < circle.length; i++) {
+
+            if (position >= i) {
+                circle[i] = new MapCircle(
+                        MapPoint.mapPointWithGeoCoord(my_latitude, my_longitude), // center
+                        radius[i], // radius
+                        Color.argb(128, 255, 0, 0), // strokeColor
+                        Color.argb(0, 0, 0, 0) // fillColor
+                );
+                circle[i].setTag(i);
+//                drawMarker();
+                Log.d("댕댕이의 코딩대작전", "drawcircle: 나몇번호출대?");
+                mapView.addCircle(circle[i]);
+            }
+
+
+        }
+
 
     }
 
@@ -700,6 +703,14 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                     zoomSelect(3);
                     SelectNum = 3;
                     break;
+
+                case R.id.zoomlevel_5:
+                    mapView.setZoomLevel(1, true);
+                    SelectNone(SelectNum);
+                    zoomSelect(4);
+                    SelectNum = 4;
+                    break;
+
                 case R.id.display_lock:
                     display_controll = false;
                     stopImg_controll(1);
@@ -733,51 +744,110 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                     break;
 
                 case R.id.displayMoveUp:
-                    mapMoveControll(1);
 
+                    mapMoveControll(1);
+                    if (locationControll) {
+                        mapView.removeAllPOIItems();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                my_location();
+                            }
+                        }, 100);
+                    }
                     break;
 
                 case R.id.displayMoveDown:
                     mapMoveControll(2);
-
+                    if (locationControll) {
+                        mapView.removeAllPOIItems();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                my_location();
+                            }
+                        }, 100);
+                    }
                     break;
 
 
                 case R.id.displayMoveRight:
                     mapMoveControll(3);
-
+                    if (locationControll) {
+                        mapView.removeAllPOIItems();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                my_location();
+                            }
+                        }, 100);
+                    }
                     break;
 
                 case R.id.displayMoveLeft:
                     mapMoveControll(4);
-
+                    if (locationControll) {
+                        mapView.removeAllPOIItems();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                my_location();
+                            }
+                        }, 100);
+                    }
                     break;
                 case 0:
-                        Intent intent = new Intent(MainActivity.this, imageView.class);
-                        intent.putExtra("image_data", mapDatas.get(1).getImg_path());
-                        startActivity(intent);
-                        break;
+                    Intent intent = new Intent(MainActivity.this, imageView.class);
+                    intent.putExtra("image_data", mapDatas.get(1).getImg_path());
+                    startActivity(intent);
+                    break;
 
-//                case 1:
-//                    Intent intent = new Intent(MainActivity.this, imageView.class);
-//                    intent.putExtra("image_data", mapDatas.get(1).getImg_path());
-//                    startActivity(intent);
-//                    break;
-//
-//                case 0:
-//                    Intent intent = new Intent(MainActivity.this, imageView.class);
-//                    intent.putExtra("image_data", mapDatas.get(1).getImg_path());
-//                    startActivity(intent);
-//                    break;
+                case R.id.circle_radius_100:
+                    drawcircle(0);
+                    distance.setText("100");
+                    distance.setTextColor(Color.parseColor("#000000"));
+                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
+                    break;
 
+                case R.id.circle_radius_300:
+                    drawcircle(1);
+                    distance.setText("300");
+                    distance.setTextColor(Color.parseColor("#000000"));
+                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
+                    break;
 
-                        }
+                case R.id.circle_radius_500:
+                    drawcircle(2);
+                    distance.setText("500");
+                    distance.setTextColor(Color.parseColor("#000000"));
+                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
+                    break;
 
+                case R.id.circle_remove:
+                    distance.setTextColor(Color.parseColor("#40000000"));
+                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_default));
+                    mapView.removeAllCircles();
+                    break;
+
+                case R.id.move_location:
+                    locationControll = true;
+                    mylocation.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.my_location));
+                    mapView.removeAllPOIItems();
+                    my_location();
+
+                    break;
+
+                case R.id.stop_location:
+                    locationControll = false;
+                    mylocation.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.locationstop_icon));
+                    mapView.removeAllPOIItems();
+                    break;
+            }
 
         }
     };
 
-    private void voiceControll(){
+    private void voiceControll() {
 
         zoombtn1.setOnClickListener(mapControill);
         zoombtn2.setOnClickListener(mapControill);
@@ -795,22 +865,31 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
         moveDown.setOnClickListener(mapControill);
         moveLeft.setOnClickListener(mapControill);
         moveRight.setOnClickListener(mapControill);
-        a.setOnClickListener(mapControill);
+
+        circle1.setOnClickListener(mapControill);
+        circle2.setOnClickListener(mapControill);
+        circle3.setOnClickListener(mapControill);
+        remove_circle.setOnClickListener(mapControill);
+
+        locationMove.setOnClickListener(mapControill);
+        locationStop.setOnClickListener(mapControill);
+
+//        createText.setOnClickListener(mapControill);
     }
 
 
-    private void zoom_sensor(float x , float y){
-        x_location = x / ((zoomNum+1)*1000);
-        y_location = y / ((zoomNum+1)*1000);
+    private void zoom_sensor(float x, float y) {
+        x_location = x / ((zoomNum + 1) * 1000);
+        y_location = y / ((zoomNum + 1) * 1000);
 
     }
 
-    private void mapMoveControll(int location){
+    private void mapMoveControll(int location) {
 
         double my_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
         double my_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
 
-        if(display_controll!=true) {
+        if (display_controll != true) {
 
             switch (location) {
                 case 1:
@@ -864,12 +943,33 @@ public class MainActivity extends AppCompatActivity implements MapView.POIItemEv
                         }, 300);
                     }
                     break;
+
+
             }
         }
     }
+
+    private void my_location() {
+
+        double my_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
+        double my_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
+
+        MapPoint map = MapPoint.mapPointWithGeoCoord(my_latitude, my_longitude);
+
+        MapPOIItem marker = new MapPOIItem();
+        marker.setItemName("Default Marker");
+        marker.setTag(0);
+        marker.setMapPoint(map);
+        marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
+        marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+        marker.setShowAnimationType(SpringFromGround);
+
+        mapView.addPOIItem(marker);
+
+    }
+
+
 }
-
-
 
 
 /*******************************************************************************************************************************************************

@@ -57,42 +57,45 @@
         android:background="@drawable/circle_border"
         android:text="5" />
 
+
+
+    <Button
+        android:id="@+id/displayLocation"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/locationstop_icon"/>
+
+
+    <Button
+        android:id="@+id/distanceCircle"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@+id/displayLocation"
+        android:background="@drawable/circle_default"
+        android:textSize="13dp"
+        android:textColor="#40000000"
+        android:text="반경" />
+
+
     <Button
         android:id="@+id/display_move_on"
         android:layout_marginTop="10dp"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@+id/distanceCircle"
         android:background="@drawable/displaycontroll_off"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginRight="8dp"/>
 
 
-    <Button
-        android:id="@+id/distance1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/display_move_on"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:text="500M" />
 
-    <Button
-        android:id="@+id/distance2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/distance1"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:text="4000M" />
 
-    <Button
-        android:id="@+id/tracking_on"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/distance2"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:text="트래킹on" />
+
+
 
     <Button
         android:id="@+id/display_lock_img"
@@ -233,6 +236,48 @@
         android:layout_height="wrap_content"
         android:textSize="1px"
         android:text="왼쪽"/>
+
+    <TextView
+        android:id="@+id/circle_radius_100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="반경 100미터"/>
+
+    <TextView
+        android:id="@+id/circle_radius_300"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="반경 300미터"/>
+
+    <TextView
+        android:id="@+id/circle_radius_500"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="반경 500미터"/>
+
+    <TextView
+        android:id="@+id/circle_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="반경 해제"/>
+
+    <TextView
+        android:id="@+id/move_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="내 위치 이동"/>
+
+    <TextView
+        android:id="@+id/stop_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="내 위치 이동 해제"/>
 
 
 </RelativeLayout>
