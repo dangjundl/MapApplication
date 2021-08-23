@@ -3,6 +3,7 @@
     android:id="@+id/maplayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:contentDescription="hf_no_number"
     android:orientation="vertical">
 
     <!--필요에따라 버튼에 애니메이션 넣기-->
@@ -58,14 +59,23 @@
         android:text="5" />
 
 
+    <Button
+        android:id="@+id/trackingmod"
+        android:layout_marginTop="10dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/trackingmod_on"
+        android:layout_marginRight="20dp"/>
+
 
     <Button
         android:id="@+id/displayLocation"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@+id/trackingmod"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="8dp"
         android:background="@drawable/locationstop_icon"/>
 
 
@@ -90,6 +100,8 @@
         android:layout_toLeftOf="@+id/distanceCircle"
         android:background="@drawable/displaycontroll_off"
         android:layout_marginRight="8dp"/>
+
+
 
 
 
@@ -278,6 +290,42 @@
         android:layout_height="wrap_content"
         android:textSize="1px"
         android:text="내 위치 이동 해제"/>
+
+    <TextView
+        android:id="@+id/next_marker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="다음 마커"/>
+
+
+    <TextView
+        android:id="@+id/before_marker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="이전 마커"/>
+
+    <TextView
+        android:id="@+id/select_marker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="선택"/>
+
+    <TextView
+        android:id="@+id/trackingmodOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="내위치 켜기"/>
+
+    <TextView
+        android:id="@+id/trackingmodOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="내위치 끄기"/>
 
 
 </RelativeLayout>

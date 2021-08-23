@@ -34,7 +34,7 @@ public class imageView extends AppCompatActivity {
 //                .load(picData)
 //                .into(test_happy);
 
-                Glide.with(getApplicationContext()).load("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fldsrd%2FbtrcAbqdHnn%2FkOXiUz2YtJdUi0l2xTctv1%2Fimg.jpg")
+                Glide.with(getApplicationContext()).load(picData)
             .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .listener(new RequestListener<Drawable>() {
                     @Override
