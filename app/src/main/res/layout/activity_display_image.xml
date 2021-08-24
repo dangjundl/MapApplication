@@ -2,12 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:contentDescription="hf_no_number"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DisplayImage">
 
     <androidx.recyclerview.widget.RecyclerView
+
         android:id="@+id/pic_recyclerView"
+        android:padding="15dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

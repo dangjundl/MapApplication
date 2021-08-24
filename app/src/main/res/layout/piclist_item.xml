@@ -2,10 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="210dp"
-    android:layout_height="220dp">
+    android:contentDescription="hf_no_number"
+    android:padding="8dp"
+    android:layout_width="200dp"
+    android:layout_height="200dp">
 
     <androidx.cardview.widget.CardView
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft=".5dp"
@@ -20,8 +23,8 @@
 
             <ImageView
                 android:id="@+id/image"
-                android:layout_width="210dp"
-                android:layout_height="190dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 tools:ignore="ContentDescription" />
 
@@ -37,5 +40,18 @@
                 android:textColor="@color/black" />
 
         </FrameLayout>
+
+        <TextView
+            android:id="@+id/image_position"
+            android:gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:background="@drawable/position_border"
+            android:text="1"/>
+
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

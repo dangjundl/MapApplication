@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,13 +14,14 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-class recycler_adapter extends RecyclerView.Adapter<recycler_adapter.CustomViewHolder> {
+class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.CustomViewHolder> {
     private ArrayList<Piclist_data> arrayList;
     private final Context pictureContx;
     private final itemClickListener picListerner;
+    private String position_num;
 
 
-    public recycler_adapter(ArrayList<Piclist_data> arrayList, Context pictureContext, itemClickListener picListerner) {
+    public recyclerAdapter(ArrayList<Piclist_data> arrayList, Context pictureContext, itemClickListener picListerner) {
         this.arrayList = arrayList;
         this.pictureContx = pictureContext;
         this.picListerner = picListerner;
@@ -29,7 +29,7 @@ class recycler_adapter extends RecyclerView.Adapter<recycler_adapter.CustomViewH
 
     @NonNull
     @Override
-    public recycler_adapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public recyclerAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.piclist_item, parent, false);
         CustomViewHolder holder = new CustomViewHolder(view);
@@ -38,7 +38,10 @@ class recycler_adapter extends RecyclerView.Adapter<recycler_adapter.CustomViewH
     }
 
     @Override
-    public void onBindViewHolder(@NonNull recycler_adapter.CustomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull recyclerAdapter.CustomViewHolder holder, int position) {
+
+        position_num =""+(position+1);
+
 
         Piclist_data mdata = arrayList.get(position);
         Glide.with(pictureContx)
@@ -46,6 +49,7 @@ class recycler_adapter extends RecyclerView.Adapter<recycler_adapter.CustomViewH
                 .into(holder.imageView);
 
         holder.location_name.setText(mdata.name);
+        holder.item_position.setText(position_num);
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +57,15 @@ class recycler_adapter extends RecyclerView.Adapter<recycler_adapter.CustomViewH
                 picListerner.onPicClicked(holder, position, arrayList);
             }
         });
+
+        holder.item_position.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                picListerner.onPicClicked(holder, position, arrayList);
+            }
+        });
+
+
     }
 
 
@@ -74,12 +87,13 @@ class recycler_adapter extends RecyclerView.Adapter<recycler_adapter.CustomViewH
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView imageView;
-        private TextView location_name;
+        private TextView location_name,item_position;
 
         public CustomViewHolder(@NonNull View itemView) {
             super(itemView);
             this.imageView = (ImageView) itemView.findViewById(R.id.image);
             this.location_name = (TextView) itemView.findViewById(R.id.image_Name);
+            this.item_position = (TextView) itemView.findViewById(R.id.image_position);
         }
     }
 }

@@ -64,4 +64,8 @@ class mapData implements Serializable {
     public void setImg_path(String img_path) {
         this.img_path = img_path;
     }
+
+
+
+
 }
