@@ -25,7 +25,7 @@
     <string name="CircleRelase">반경 해제</string>
 
     <string name="mylocationMove">내 위치 이동</string>
-    <string name="mylocationMoveRelase">내 위치 이동 해제</string>
+    <string name="mylocationMoveRelase">내 위치 이동 끄기</string>
 
     <string name="NextMarker">다음 마커</string>
     <string name="BeforeMarker">이전 마커</string>
@@ -39,6 +39,14 @@
 
     <string name="OpenMap">지도 열기</string>
     <string name="ExitMap">종료 하기</string>
+
+    <string name="markerLocation">지정한 위치로 이동</string>
+
+    <string name="allmarker">전체 마커 보기</string>
+    <string name="hideAllmarker">전체 마커 숨기기</string>
+
+
+
 
 
 </resources>

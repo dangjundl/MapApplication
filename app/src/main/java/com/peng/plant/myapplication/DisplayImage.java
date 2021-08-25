@@ -1,18 +1,21 @@
 package com.peng.plant.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.peng.plant.myapplication.adapter.recyclerAdapter;
 import com.peng.plant.myapplication.data.Piclist_data;
 import com.peng.plant.myapplication.listener.itemClickListener;
 import com.peng.plant.myapplication.listener.recyclerViewScrollController;
+import com.peng.plant.myapplication.view.imageView;
 
 import java.util.ArrayList;
 

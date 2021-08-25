@@ -26,10 +26,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DisplayImage"
+            android:name=".view.imageView"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".imageView"
+            android:name=".DisplayImage"
             android:screenOrientation="landscape" />
         <activity
             android:name=".MainActivity"

@@ -101,18 +101,6 @@
         android:background="@drawable/displaycontroll_off"
         android:layout_marginRight="8dp"/>
 
-
-    <Button
-        android:id="@+id/test"
-        android:layout_marginTop="10dp"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        android:layout_toLeftOf="@+id/display_move_on"
-        android:text="테스트"
-        android:layout_marginRight="8dp"/>
-
-
-
     <Button
         android:id="@+id/display_lock_img"
         android:layout_alignParentBottom="true"
@@ -345,6 +333,28 @@
         android:layout_height="wrap_content"
         android:textSize="1px"
         android:text="@string/zoomOut"/>
+
+    <TextView
+        android:id="@+id/designateLocatin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="@string/markerLocation"/>
+
+
+    <TextView
+        android:id="@+id/allMarkerShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="@string/allmarker"/>
+
+    <TextView
+        android:id="@+id/allMarkerHide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="@string/hideAllmarker"/>
 
 
 
