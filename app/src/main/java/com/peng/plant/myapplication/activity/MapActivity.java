@@ -1,4 +1,4 @@
-package com.peng.plant.myapplication;
+package com.peng.plant.myapplication.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.peng.plant.myapplication.MainActivity;
+import com.peng.plant.myapplication.R;
 
 public class MapActivity extends AppCompatActivity {
     private Toast toast;

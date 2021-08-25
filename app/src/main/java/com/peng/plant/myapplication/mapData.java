@@ -6,11 +6,11 @@ import java.io.Serializable;
 
 class mapData implements Serializable {
 
-    String name;
-    String img_path;
-    double latitude;
-    double longitude;
-    double distance;
+    public String name;
+    public String img_path;
+    public double latitude;
+    public double longitude;
+    public double distance;
 
     public Bitmap getBitmap_Marker() {
         return bitmap_Marker;
@@ -64,8 +64,6 @@ class mapData implements Serializable {
     public void setImg_path(String img_path) {
         this.img_path = img_path;
     }
-
-
 
 
 }

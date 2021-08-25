@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:contentDescription="hf_no_number"
     android:orientation="vertical"
-    tools:context=".MapActivity">
+    tools:context=".activity.MapActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
                 android:background="@drawable/round_box_item"
                 android:drawableTop="@drawable/map_icon_item"
                 android:padding="10dp"
-                android:text="지도 열기"
+                android:text="@string/OpenMap"
                 android:textColor="@color/black"
                 android:textSize="18dp" />
 
@@ -67,7 +67,7 @@
                 android:background="@drawable/round_box_item"
                 android:drawableTop="@drawable/exit_icon_item"
                 android:padding="10dp"
-                android:text="종료 하기"
+                android:text="@string/ExitMap"
                 android:textColor="@color/black"
                 android:textSize="18dp" />
 

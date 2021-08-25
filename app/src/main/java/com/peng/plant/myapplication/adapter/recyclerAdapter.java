@@ -1,4 +1,4 @@
-package com.peng.plant.myapplication;
+package com.peng.plant.myapplication.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,10 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.peng.plant.myapplication.data.Piclist_data;
+import com.peng.plant.myapplication.R;
+import com.peng.plant.myapplication.listener.itemClickListener;
 
 import java.util.ArrayList;
 
-class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.CustomViewHolder> {
+public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.CustomViewHolder> {
     private ArrayList<Piclist_data> arrayList;
     private final Context pictureContx;
     private final itemClickListener picListerner;

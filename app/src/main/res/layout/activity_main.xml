@@ -89,7 +89,7 @@
         android:background="@drawable/circle_default"
         android:textSize="13dp"
         android:textColor="#40000000"
-        android:text="반경" />
+        android:text="@string/Circle" />
 
 
     <Button
@@ -102,10 +102,14 @@
         android:layout_marginRight="8dp"/>
 
 
-
-
-
-
+    <Button
+        android:id="@+id/test"
+        android:layout_marginTop="10dp"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:layout_toLeftOf="@+id/display_move_on"
+        android:text="테스트"
+        android:layout_marginRight="8dp"/>
 
 
 
@@ -161,35 +165,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="줌레벨 1"/>
+        android:text="@string/zoomlevel1"/>
 
     <TextView
         android:id="@+id/zoomlevel_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="줌레벨 2"/>
+        android:text="@string/zoomlevel2"/>
 
     <TextView
         android:id="@+id/zoomlevel_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="줌레벨 3"/>
+        android:text="@string/zoomlevel3"/>
 
     <TextView
         android:id="@+id/zoomlevel_4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="줌레벨 4"/>
+        android:text="@string/zoomlevel4"/>
 
     <TextView
         android:id="@+id/zoomlevel_5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="줌레벨 5"/>
+        android:text="@string/zoomlevel5"/>
 
 
     <TextView
@@ -197,28 +201,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="화면 고정"/>
+        android:text="@string/displayStop"/>
 
     <TextView
         android:id="@+id/display_lock_off"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="화면 고정 해제"/>
+        android:text="@string/displayStopRelase"/>
 
     <TextView
         android:id="@+id/displaySensor_on"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="화면 이동"/>
+        android:text="@string/displayMove"/>
 
     <TextView
         android:id="@+id/displaySensor_off"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="화면 이동 해제"/>
+        android:text="@string/displayMoveRelase"/>
 
 
     <TextView
@@ -226,77 +230,77 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="위"/>
+        android:text="@string/moveUp"/>
 
     <TextView
         android:id="@+id/displayMoveDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="아래"/>
+        android:text="@string/moveDown"/>
 
     <TextView
         android:id="@+id/displayMoveRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="오른쪽"/>
+        android:text="@string/moveRight"/>
 
     <TextView
         android:id="@+id/displayMoveLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="왼쪽"/>
+        android:text="@string/moveLeft"/>
 
     <TextView
         android:id="@+id/circle_radius_100"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="반경 100미터"/>
+        android:text="@string/Circle100"/>
 
     <TextView
         android:id="@+id/circle_radius_300"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="반경 300미터"/>
+        android:text="@string/Circle300"/>
 
     <TextView
         android:id="@+id/circle_radius_500"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="반경 500미터"/>
+        android:text="@string/Circle500"/>
 
     <TextView
         android:id="@+id/circle_remove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="반경 해제"/>
+        android:text="@string/CircleRelase"/>
 
     <TextView
         android:id="@+id/move_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="내 위치 이동"/>
+        android:text="@string/mylocationMove"/>
 
     <TextView
         android:id="@+id/stop_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="내 위치 이동 해제"/>
+        android:text="@string/mylocationMoveRelase"/>
 
     <TextView
         android:id="@+id/next_marker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="다음 마커"/>
+        android:text="@string/NextMarker"/>
 
 
     <TextView
@@ -304,28 +308,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="이전 마커"/>
+        android:text="@string/BeforeMarker"/>
 
     <TextView
         android:id="@+id/select_marker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="선택"/>
+        android:text="@string/SelectMarker"/>
 
     <TextView
         android:id="@+id/trackingmodOn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="내위치 켜기"/>
+        android:text="@string/TrackingmodOn"/>
 
     <TextView
         android:id="@+id/trackingmodOff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="1px"
-        android:text="내위치 끄기"/>
+        android:text="@string/TrackingmodOff"/>
+
+
+    <TextView
+        android:id="@+id/zoomIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="@string/zoomIn"/>
+
+    <TextView
+        android:id="@+id/zoomOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="1px"
+        android:text="@string/zoomOut"/>
+
 
 
 </RelativeLayout>

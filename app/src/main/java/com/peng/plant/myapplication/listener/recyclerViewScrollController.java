@@ -1,4 +1,4 @@
-package com.peng.plant.myapplication;
+package com.peng.plant.myapplication.listener;
 
 
 import android.content.Context;
@@ -14,7 +14,7 @@ import static android.hardware.SensorManager.getRotationMatrixFromVector;
 import static android.hardware.SensorManager.remapCoordinateSystem;
 import static java.lang.Math.abs;
 
-public class TiltScrollController implements SensorEventListener {
+public class recyclerViewScrollController implements SensorEventListener {
     private static final float THRESHOLD_MOTION = 0.001f;
     private static final int SENSOR_DELAY_MICROS = 32 * 1000; // 32ms
 
@@ -40,7 +40,7 @@ public class TiltScrollController implements SensorEventListener {
      * @param ctx            The context that the scroll view is running in.
      * @param scrollListener The listener for scroll events.
      */
-    public TiltScrollController(Context ctx, ScrollListener scrollListener) {
+    public recyclerViewScrollController(Context ctx, ScrollListener scrollListener) {
         mListener = scrollListener;
 
         mWindowManager = ctx.getSystemService(WindowManager.class);

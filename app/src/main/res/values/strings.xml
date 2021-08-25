@@ -1,3 +1,44 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="zoomlevel1">줌레벨 1</string>
+    <string name="zoomlevel2">줌레벨 2</string>
+    <string name="zoomlevel3">줌레벨 3</string>
+    <string name="zoomlevel4">줌레벨 4</string>
+    <string name="zoomlevel5">줌레벨 5</string>
+
+    <string name="displayStop">화면 고정</string>
+    <string name="displayStopRelase">화면 고정 해제</string>
+
+    <string name="displayMove">화면 이동</string>
+    <string name="displayMoveRelase">화면 이동 해제</string>
+
+    <string name="moveUp">위</string>
+    <string name="moveDown">아래</string>
+    <string name="moveLeft">왼쪽</string>
+    <string name="moveRight">오른쪽</string>
+
+    <string name="Circle">반경</string>
+
+    <string name="Circle100">반경 100미터</string>
+    <string name="Circle300">반경 300미터</string>
+    <string name="Circle500">반경 500미터</string>
+    <string name="CircleRelase">반경 해제</string>
+
+    <string name="mylocationMove">내 위치 이동</string>
+    <string name="mylocationMoveRelase">내 위치 이동 해제</string>
+
+    <string name="NextMarker">다음 마커</string>
+    <string name="BeforeMarker">이전 마커</string>
+    <string name="SelectMarker">선택</string>
+
+    <string name="TrackingmodOn">내위치 켜기</string>
+    <string name="TrackingmodOff">내위치 끄기</string>
+
+    <string name="zoomIn">확대</string>
+    <string name="zoomOut">축소</string>
+
+    <string name="OpenMap">지도 열기</string>
+    <string name="ExitMap">종료 하기</string>
+
+
 </resources>

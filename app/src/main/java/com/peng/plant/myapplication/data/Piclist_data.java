@@ -1,14 +1,14 @@
-package com.peng.plant.myapplication;
+package com.peng.plant.myapplication.data;
 
 import java.io.Serializable;
 
-class Piclist_data implements Serializable {
+public class Piclist_data implements Serializable {
 
-    String name;
-    String img_path;
-    double latitude;
-    double longitude;
-    double distance;
+    public String name;
+    public String img_path;
+    public double latitude;
+    public double longitude;
+    public double distance;
 
     public Piclist_data() {}
 

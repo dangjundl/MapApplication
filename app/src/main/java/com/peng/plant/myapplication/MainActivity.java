@@ -23,20 +23,17 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.resource.bitmap.CenterInside;
+import com.peng.plant.myapplication.data.Piclist_data;
+import com.peng.plant.myapplication.listener.TiltScrollController;
 
-import net.daum.android.map.MapEngineManager;
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
-import net.daum.mf.map.n.api.internal.NativePOIItemMarkerManager;
-import net.daum.mf.map.task.MapTaskManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static net.daum.mf.map.api.MapPOIItem.ShowAnimationType.SpringFromGround;
 
@@ -51,27 +49,31 @@ import static net.daum.mf.map.api.MapPOIItem.ShowAnimationType.SpringFromGround;
 public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, TiltScrollController.ScrollListener {
 
     private Button[] zoombtn;
-    private double latitude, longitude, x_location, y_location;
-    private boolean display_controll;
+    private double latitude, longitude, x_location, y_location , my_latitude, my_longitude;
     private MapView mapView;
     private TiltScrollController mTiltScrollController;
     private MapPOIItem[] poiItems;
     private ArrayList<String> pic_data, setName;
     private ArrayList<Double> distances;
-    private Button distance, display_move, display_stop_img, mylocation, leftMove, rightMove, upMove, downMove, trackingMod_btn;
-    private Boolean distance1, distance2, relase, locationControll;
+    private Button distance, display_move, display_stop_img, mylocation, leftMove, rightMove, upMove, downMove, trackingMod_btn , test;
+    private Boolean relase, locationControll , display_controll;
     private ArrayList<MapPOIItem> marker;
     private ArrayList<MapPoint> CustomMapPoint;
     private ArrayList<mapData> mapDatas;
     private ArrayList<Piclist_data> imglist;
+    private ArrayList<Bitmap> img;
+    private ArrayList<Integer> positions;
+
     private Bitmap mbitmap, resize_bitmap;
-    private int SelectNum, zoomNum, markerNum;
+    private int SelectNum, zoomNum, markerNum,markerPosition;
     private Animation fadeInAnim, fadeOutAnim;
     private TextView zoombtn1, zoombtn2, zoombtn3, zoombtn4, zoombtn5, display_lockOn, display_lockOff, Sensor_on, Sensor_off, moveUp, moveDown, moveLeft, moveRight,
-            circle1, circle2, circle3, remove_circle, locationMove, locationStop, next_btn, before_btn, select_btn, trackingOn, trackingOff;
+            circle1, circle2, circle3, remove_circle, locationMove, locationStop, next_btn, before_btn, select_btn, trackingOn, trackingOff,zoomIn_btn,zoomOut_btn;
     private RelativeLayout container;
     private TextView[] createText;
-    private double my_latitude, my_longitude;
+
+
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -100,7 +102,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         pic_data = new ArrayList<String>();//사용자가 올린 사진 데이터
         distances = new ArrayList<Double>();//내위치에서 마커까지의 거리
         CustomMapPoint = new ArrayList<MapPoint>();// 위도 경도 값
-
+        img = new ArrayList<Bitmap>();// 위도 경도 값
+        positions = new ArrayList<Integer>();
         marker = new ArrayList<MapPOIItem>();//마커 객체들
 
         mapDatas = new ArrayList<mapData>(); //사용자가 지정한 사진의 이름 , 사용자가 올린 사진데이터 , 위도 경도, 현재 내위치에서의 거리등을 총괄적으로 저장
@@ -141,13 +144,27 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         for (int i = 0; i < setName.size(); i++) {
             marker.add(i, new MapPOIItem());
-            CustomMapPoint.add(i, MapPoint.mapPointWithGeoCoord((37.43232 - (i * 0.01)), ((127.17854 - (i * 0.01)))));
+//            CustomMapPoint.add(i, MapPoint.mapPointWithGeoCoord((37.43232 - ( 0.001 * i)), ((127.17854 - (0.001 * i)))));
         }
+        CustomMapPoint.add(0, MapPoint.mapPointWithGeoCoord(37.43263 , 127.17840 ));
+        CustomMapPoint.add(1, MapPoint.mapPointWithGeoCoord(37.43263 , 127.17729 ));
+        CustomMapPoint.add(2, MapPoint.mapPointWithGeoCoord(37.43176 , 127.17946 ));
+        CustomMapPoint.add(3, MapPoint.mapPointWithGeoCoord(37.43078 , 127.17485 ));
+        CustomMapPoint.add(4, MapPoint.mapPointWithGeoCoord(37.43540 , 127.17628 ));
+        CustomMapPoint.add(5, MapPoint.mapPointWithGeoCoord(37.43307 , 127.17268 ));
+        CustomMapPoint.add(6, MapPoint.mapPointWithGeoCoord(37.43472 , 127.17825 ));
+        CustomMapPoint.add(7, MapPoint.mapPointWithGeoCoord(37.43517 , 127.17525 ));
+        CustomMapPoint.add(8, MapPoint.mapPointWithGeoCoord(37.43625 , 127.16960 ));
+        CustomMapPoint.add(9, MapPoint.mapPointWithGeoCoord(37.43175, 127.16889 ));
+        CustomMapPoint.add(10, MapPoint.mapPointWithGeoCoord(37.43360, 127.17562 ));
+        CustomMapPoint.add(11, MapPoint.mapPointWithGeoCoord(37.43469 , 127.18135 ));
+        CustomMapPoint.add(12, MapPoint.mapPointWithGeoCoord(37.43777 , 127.17505 ));
+        CustomMapPoint.add(13, MapPoint.mapPointWithGeoCoord(37.43467 , 127.17079 ));
+        CustomMapPoint.add(14, MapPoint.mapPointWithGeoCoord(37.43093 , 127.17060 ));
 
         initDistanceCalculate();
         addMapdata();
         urlImgConvert();
-//        drawMarker();
 
         for (int i = 0; i < mapDatas.size(); i++) {
             Log.d("하하", "onCreate: mapdatas : " + i + "번 " + mapDatas.get(i).getDistance());
@@ -170,8 +187,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         /*애니메이션 */
 
         /*bloean */
-        distance1 = true;
-        distance2 = true;
         display_controll = false; // 화면 이동 제어
         locationControll = false; // 현재 내위치 이동 제어
         relase = false; // 화면 고정 해제 , 이동 해제 등등 제어
@@ -197,12 +212,14 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         zoombtn4 = findViewById(R.id.zoomlevel_4);
         zoombtn5 = findViewById(R.id.zoomlevel_5);
 
+        zoomIn_btn =findViewById(R.id.zoomIn);
+        zoomOut_btn =findViewById(R.id.zoomOut);
+
         display_lockOn = findViewById(R.id.display_lock);
         display_lockOff = findViewById(R.id.display_lock_off);
 
         Sensor_on = findViewById(R.id.displaySensor_on);
         Sensor_off = findViewById(R.id.displaySensor_off);
-
 
         moveUp = findViewById(R.id.displayMoveUp);
         moveDown = findViewById(R.id.displayMoveDown);
@@ -215,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         downMove = findViewById(R.id.down);
 
         distance = findViewById(R.id.distanceCircle);
-
+        test = findViewById(R.id.test);
         circle1 = findViewById(R.id.circle_radius_100);
         circle2 = findViewById(R.id.circle_radius_300);
         circle3 = findViewById(R.id.circle_radius_500);
@@ -266,7 +283,18 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 //        }
 //        /* 필요없는 부분 , 수정해서쓸 부분 */
 
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                Log.d("what", "onClick: 처음 사이즈 : "+ positions.size());
+
+//                markerDistance(1000);
+                positions.removeAll(positions);
+                Log.d("what", "onClick: size : "+ positions.size());
+
+            }
+        });
 
         /* zoomlevel controll */
         for (int i = 0; i < zoombtn.length; i++) {
@@ -338,65 +366,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         }
 
-        /********************************텍스트뷰 동적 생성 ********************************/
-
-
-        //반경 50 미터
-//        distance_test.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (latitude > 0 && longitude > 0 && distance1) {
-//                    drawcircle(500);
-//                    distance2 = true;
-//                    Log.d("daeng", "onClick: marker_show 크기 : " + markers.size());
-//                    for (int i = 0; i < poiItems.length; i++) {
-//                        if (markers.get(i) < 500) {
-//                            poiItems[i].setItemName(setName.get(i));
-//                            poiItems[i].setShowAnimationType(SpringFromGround);
-//                            poiItems[i].setShowCalloutBalloonOnTouch(false);
-//
-//                            Log.d("daeng", "onClick: " + poiItems[i].getItemName());
-//                        } else {
-//                            poiItems[i].setItemName(null);
-//                        }
-//                    }
-//                    mapView.addPOIItems(poiItems);
-//
-//                    distance1 = false;
-////                    select_circle = 1;
-//                }
-//                poiItems[1].setItemName(setName.get(1));
-//                poiItems[1].setShowAnimationType(SpringFromGround);
-//                mapView.addPOIItems(poiItems);
-//            }
-//        });
-
-        //반경 4천미터
-//        distance_test2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (latitude > 0 && longitude > 0 && distance2) {
-//                    drawcircle(4000);
-//                    distance1 = true;
-//
-//                    for (int i = 0; i < poiItems.length; i++) {
-//                        if (markers.get(i) < 4000) {
-//                            poiItems[i].setItemName(setName.get(i));
-//                            poiItems[i].setShowCalloutBalloonOnTouch(false);
-//                            poiItems[i].setShowAnimationType(SpringFromGround);
-//                        } else {
-//                            poiItems[i].setItemName(null);
-//
-//                        }
-//                    }
-//                    mapView.addPOIItems(poiItems);
-//                    distance2 = false;
-////                    select_circle = 2;
-//                }
-//            }
-//        });
-
-
     }
 
 
@@ -411,6 +380,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         for (int i = 0; i < setName.size(); i++) {
             mapDatas.get(i).setDistance(distances.get(i));
         }
+        locationControll = true;
+
     }
 
     @Override
@@ -533,7 +504,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     }
 
     private void drawcircle(int position) {
-        mapView.removeAllCircles();
 //        mapView.removeAllPOIItems();
         int[] radius = {100, 300, 500};
         MapCircle[] circle = new MapCircle[3];
@@ -590,7 +560,66 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 //            }
         }
         mapView.addPOIItems(poiItems);
-        mapView.selectPOIItem(poiItems[0], true);
+        if(positions.size()>0) {
+            mapView.selectPOIItem(poiItems[positions.get(0)], true);
+        }
+        }
+
+
+
+    private void markerDistance(int radius){
+
+        DistanceCalculate();
+        markerNum = 0;
+        if(mapDatas.get(0).getBitmap_Marker()==null) {
+            for (int i = 0; i < pic_data.size(); i++) {
+                mapData imgs = new mapData();
+                imgs.setBitmap_Marker(img.get(i));
+                imgs.setLatitude(CustomMapPoint.get(i).getMapPointGeoCoord().latitude);
+                imgs.setLongitude(CustomMapPoint.get(i).getMapPointGeoCoord().longitude);
+                mapDatas.set(i,imgs);
+            }
+        }
+            positions.removeAll(positions);
+
+
+        for (int i = 0; i < pic_data.size(); i++) {
+
+            Log.d("maps", "mapdatas값 : " + mapDatas.get(i).getDistance());
+            if (distances.get(i) < radius) {
+
+                markerPosition = i;
+                positions.add(markerPosition);
+                marker.get(i).setTag(i);
+                marker.get(i).setItemName("마커 " + (i + 1));
+                marker.get(i).setMapPoint(MapPoint.mapPointWithGeoCoord(mapDatas.get(i).latitude, mapDatas.get(i).longitude));
+
+//                        marker.get(i).setMarkerType(MapPOIItem.MarkerType.BluePin);
+                marker.get(i).setMarkerType(MapPOIItem.MarkerType.CustomImage);
+                Log.d("1", "mapdatas" + i + mapDatas.get(i).getBitmap_Marker());
+                marker.get(i).setCustomImageBitmap(mapDatas.get(i).getBitmap_Marker());
+
+//                        if (marker.get(i).getCustomImageBitmap() == null) {
+//                            MapPOIItem mapitem = new MapPOIItem();
+//                            mapitem.setCustomImageBitmap(mapDatas.get(i).getBitmap_Marker());
+//                            marker.set(i, mapitem);
+//                        }
+//                    marker.get(i).setCustomImageAutoscale(false);
+//                        marker.get(i).setItemName(mapDatas.get(i).getName());
+//                        } else {
+//                            poiItems[i].setItemName(null);
+//                        }
+            } else {
+                marker.get(i).setItemName(null);
+            }
+
+        }
+
+
+        drawMarker(marker);
+
+
+
     }
 
 
@@ -671,6 +700,15 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                     SelectNum = 4;
                     break;
 
+                case R.id.zoomIn:
+                    mapView.zoomIn(true);
+                    break;
+
+                case R.id.zoomOut:
+                    mapView.zoomOut(true);
+                    break;
+
+
                 case R.id.display_lock:
                     display_controll = false;
                     stopImg(1);
@@ -705,125 +743,134 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
                 case R.id.displayMoveUp:
                     mapMoveControll(1);
+                    removeAllitem();
                     if (locationControll) {
-                        mapView.removeAllPOIItems();
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 locationDesignate();
+//                                DistanceCalculate();
+//                                addMapdataDistance();
+
                             }
                         }, 100);
                     }
-                    DistanceCalculate();
-                    urlImgConvert();
+
                     break;
 
                 case R.id.displayMoveDown:
                     mapMoveControll(2);
+                    removeAllitem();
                     if (locationControll) {
-                        mapView.removeAllPOIItems();
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 locationDesignate();
+//                                DistanceCalculate();
+//                                addMapdataDistance();
+
                             }
                         }, 100);
                     }
-                    DistanceCalculate();
-                    urlImgConvert();
                     break;
-
 
                 case R.id.displayMoveRight:
                     mapMoveControll(3);
-
+                    removeAllitem();
                     if (locationControll) {
-                        mapView.removeAllPOIItems();
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 locationDesignate();
+//                                DistanceCalculate();
+//                                addMapdataDistance();
                             }
                         }, 100);
                     }
-                    DistanceCalculate();
-                    urlImgConvert();
+
                     break;
 
 
                 case R.id.displayMoveLeft:
                     mapMoveControll(4);
+                    removeAllitem();
                     if (locationControll) {
-                        mapView.removeAllPOIItems();
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 locationDesignate();
+//                                DistanceCalculate();
+//                                addMapdataDistance();
                             }
                         }, 100);
                     }
-                    DistanceCalculate();
-                    urlImgConvert();
+
                     break;
 
                 case R.id.circle_radius_100:
-                    drawcircle(0);
-                    distance.setText("100");
-                    distance.setTextColor(Color.parseColor("#000000"));
-                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
-
-                    mapView.removeAllPOIItems();
-
-                    for (int i = 0; i < pic_data.size(); i++) {
-                        marker.add(i, new MapPOIItem());
-
-//                        if (mapDatas.get(i).getDistance() < 100) {
-                        Log.d("sdsd", "onClick: 반경값" + mapDatas.get(i).getDistance());
-                        marker.get(i).setTag(i);
-                        marker.get(i).setItemName("마커 " + (i + 1));
-                        marker.get(i).setMapPoint(MapPoint.mapPointWithGeoCoord(mapDatas.get(i).latitude, mapDatas.get(i).longitude));
-//                        marker.get(i).setMarkerType(MapPOIItem.MarkerType.BluePin);
-                        marker.get(i).setMarkerType(MapPOIItem.MarkerType.CustomImage);
-                        marker.get(i).setCustomImageBitmap(mapDatas.get(i).getBitmap_Marker());
-                        marker.get(i).setCustomImageAutoscale(false);
-//                        marker.get(i).setItemName(mapDatas.get(i).getName());
-//                        } else {
-//                            poiItems[i].setItemName(null);
-//                        }
-
+                    if(locationControll) {
+                        trackingMod(2);
+                        removeAllitem();
+                        locationDesignate();
+                        drawcircle(0);
+                        distance.setText("100");
+                        distance.setTextColor(Color.parseColor("#000000"));
+                        distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
+                        markerDistance(100);
                     }
-
-                    drawMarker(marker);
-
+                    else{
+                        Toast.makeText(getApplicationContext(), "내위치를 갱신해주세요", Toast.LENGTH_SHORT).show();
+                    }
 
                     break;
 
                 case R.id.circle_radius_300:
-                    drawcircle(1);
-                    distance.setText("300");
-                    distance.setTextColor(Color.parseColor("#000000"));
-                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
+                    if(locationControll) {
+                        trackingMod(2);
+                        removeAllitem();
+                        locationDesignate();
+                        drawcircle(1);
+                        distance.setText("300");
+                        distance.setTextColor(Color.parseColor("#000000"));
+                        distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
+
+                        markerDistance(300);
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "내위치를 갱신해주세요", Toast.LENGTH_SHORT).show();
+                    }
                     break;
 
                 case R.id.circle_radius_500:
-                    drawcircle(2);
-                    distance.setText("500");
-                    distance.setTextColor(Color.parseColor("#000000"));
-                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
+                    if(locationControll) {
+                        trackingMod(2);
+                        removeAllitem();
+                        locationDesignate();
+                        drawcircle(2);
+                        distance.setText("500");
+                        distance.setTextColor(Color.parseColor("#000000"));
+                        distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_choice));
+                        markerDistance(500);
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "내위치를 갱신해주세요", Toast.LENGTH_SHORT).show();
+                    }
                     break;
 
                 case R.id.circle_remove:
-                    distance.setTextColor(Color.parseColor("#40000000"));
-                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_default));
-                    mapView.removeAllCircles();
-                    mapView.removeAllPOIItems();
+                        trackingMod(1);
+                        distance.setTextColor(Color.parseColor("#40000000"));
+                        distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_default));
+                        removeAllitem();
+                        locationDesignate();
+
                     break;
 
                 case R.id.move_location:
                     trackingMod(2);
                     locationControll = true;
                     mylocation.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.my_location));
-                    mapView.removeAllPOIItems();
+                    removeAllitem();
                     locationDesignate();
 
                     break;
@@ -832,12 +879,12 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                     trackingMod(1);
                     locationControll = false;
                     mylocation.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.locationstop_icon));
-                    mapView.removeAllPOIItems();
+                    removeAllitem();
                     break;
 
                 case R.id.next_marker:
 
-                    if (markerNum < poiItems.length - 1) {
+                    if (markerNum < positions.size() - 1) {
                         markerNum = markerNum + 1;
                         mapView.selectPOIItem(poiItems[markerNum], true);
                     }
@@ -866,7 +913,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                     }
                     if (imglist.size() == 0) {
                         Intent intent = new Intent(MainActivity.this, imageView.class);
-                        intent.putExtra("image_data", mapDatas.get(markerNum).getImg_path());
+                        intent.putExtra("image_data", mapDatas.get(positions.get(markerNum)).getImg_path());
                         startActivity(intent);
                     } else {
                         Intent intents = new Intent(MainActivity.this, DisplayImage.class);
@@ -883,6 +930,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
 
                 case R.id.trackingmodOff:
+                    locationControll = false;
                     trackingMod(2);
                     break;
 
@@ -897,6 +945,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         zoombtn3.setOnClickListener(mapControill);
         zoombtn4.setOnClickListener(mapControill);
         zoombtn5.setOnClickListener(mapControill);
+
+        zoomIn_btn.setOnClickListener(mapControill);
+        zoomOut_btn.setOnClickListener(mapControill);
 
         display_lockOn.setOnClickListener(mapControill);
         display_lockOff.setOnClickListener(mapControill);
@@ -1021,6 +1072,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     }
 
+
     private void addMapdata() {
 
         for (int i = 0; i < pic_data.size(); i++) {
@@ -1043,9 +1095,16 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             double markerLongitude = CustomMapPoint.get(i).getMapPointGeoCoord().longitude;
             distances.add(i, DistanceByDegreeAndroid(37.43232, 127.17854, markerLatitude, markerLongitude));
         }
+
+
+
     }
 
     private void DistanceCalculate() {
+
+        displayLocation();
+//        my_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
+//        my_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
 
         /********* 내위치와 마커간의 거리를 계산 ***/
         for (int i = 0; i < CustomMapPoint.size(); i++) {
@@ -1053,11 +1112,29 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             double markerLongitude = CustomMapPoint.get(i).getMapPointGeoCoord().longitude;
             distances.set(i, DistanceByDegreeAndroid(my_latitude, my_longitude, markerLatitude, markerLongitude));
 
+        }
+        Log.d("gg", "DistanceCalculate: " + " "+distances.get(0));
+
+
+    }
+
+    private void addMapdataDistance(){
+
+        for (int i = 0; i < CustomMapPoint.size(); i++) {
+
             mapData mData = new mapData();
             mData.setDistance(distances.get(i));
             mapDatas.set(i, mData);
 
         }
+
+    }
+
+    private void removeAllitem(){
+
+        mapView.removeAllPOIItems();
+        mapView.removeAllCircles();
+
     }
 
 
@@ -1070,12 +1147,12 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 //            String piclist = mapDatas.get(i).getImg_path();
 //            String[] img = piclist.split(",");
 //            if (img.length == 1) {
-                int finalI = i;
+                int positions = i;
                 Thread mThread = new Thread() {
                     @Override
                     public void run() {
                         try {
-                            URL url = new URL(mapDatas.get(finalI).getImg_path());
+                            URL url = new URL(mapDatas.get(positions).getImg_path());
 
                             // Web에서 이미지를 가져온 뒤
                             // ImageView에 지정할 Bitmap을 만든다
@@ -1087,8 +1164,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                             mbitmap = BitmapFactory.decodeStream(is); // Bitmap으로 변환
                             resize_bitmap = Bitmap.createScaledBitmap(mbitmap, 100, 60, true);
 
-                                mapDatas.get(finalI).setBitmap_Marker(resize_bitmap);
-
+                                mapDatas.get(positions).setBitmap_Marker(resize_bitmap);
+                                img.add(positions,resize_bitmap);
 
                         } catch (MalformedURLException e) {
                             e.printStackTrace();

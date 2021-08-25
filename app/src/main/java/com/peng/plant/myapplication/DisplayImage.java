@@ -2,19 +2,21 @@ package com.peng.plant.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.peng.plant.myapplication.adapter.recyclerAdapter;
+import com.peng.plant.myapplication.data.Piclist_data;
+import com.peng.plant.myapplication.listener.itemClickListener;
+import com.peng.plant.myapplication.listener.recyclerViewScrollController;
+
 import java.util.ArrayList;
 
-public class DisplayImage extends AppCompatActivity implements itemClickListener , recyclerViewScrollController.ScrollListener{
+public class DisplayImage extends AppCompatActivity implements itemClickListener, recyclerViewScrollController.ScrollListener{
 
     private ArrayList<Piclist_data> arrayList;
     private recyclerAdapter mAdapter;
