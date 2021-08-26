@@ -32,9 +32,11 @@ import com.peng.plant.myapplication.data.Piclist_data;
 import com.peng.plant.myapplication.listener.TiltScrollController;
 import com.peng.plant.myapplication.view.imageView;
 
+import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapPointBounds;
 import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
@@ -101,9 +103,10 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         pic_data = new ArrayList<String>();//사용자가 올린 사진 데이터
         distances = new ArrayList<Double>();//내위치에서 마커까지의 거리
         CustomMapPoint = new ArrayList<MapPoint>();// 위도 경도 값
-        img = new ArrayList<Bitmap>();// 위도 경도 값
-        positions = new ArrayList<Integer>();
         marker = new ArrayList<MapPOIItem>();//마커 객체들
+
+        img = new ArrayList<Bitmap>();
+        positions = new ArrayList<Integer>();
 
         mapDatas = new ArrayList<mapData>(); //사용자가 지정한 사진의 이름 , 사용자가 올린 사진데이터 , 위도 경도, 현재 내위치에서의 거리등을 총괄적으로 저장
         imglist = new ArrayList<Piclist_data>();
@@ -113,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
          *                                                                      데이터 넣는 부분 (이름 , 사진데이터 , 새로운 마커 객체 , 위도 경도값 지정)
          *******************************************************************************************************************************************************************/
 
-        /*************     서버에서 가져온 이미지 데이터   ************/
+        /*************     서버에서 가져온 이미지 데이터 , 와트서버는 인증서오류로 인해 개인 서버에서 업로드후 주소값 가져옴   ************/
         String[] imgdata = {
                 "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fldsrd%2FbtrcAbqdHnn%2FkOXiUz2YtJdUi0l2xTctv1%2Fimg.jpg",
                 "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbQz2vJ%2FbtrcStRNHn6%2Fyt0XdKPaL5kFHVUnZlk8c0%2Fimg.jpg",
@@ -388,6 +391,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         displayLocation();
 
+        int positions = 0;
 
         for (int i = 0; i < circle.length; i++) {
 
@@ -400,8 +404,20 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 );
                 circle[i].setTag(i);
                 mapView.addCircle(circle[i]);
+                positions = i+1;
             }
         }
+        MapPointBounds[] mapPointBoundsArray = new MapPointBounds[positions];
+        for(int i=0; i<circle.length; i++) {
+            if(circle[i]!=null) {
+                mapPointBoundsArray[i] = circle[i].getBound();
+            }
+            }
+        MapPointBounds mapPointBounds = new MapPointBounds(mapPointBoundsArray);
+        int padding = 50; // px
+        mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
+
+
     }
 
     /* 사진이 여러장일경우 점으로 표시 , 한장일경우 이미지로 표시 */
@@ -637,6 +653,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 case R.id.displayMoveUp:
                     mapMoveControll(1);
                     removeAllitem();
+                    distance.setTextColor(Color.parseColor("#40000000"));
+                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_default));
                     if (locationControll) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -651,6 +669,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 case R.id.displayMoveDown:
                     mapMoveControll(2);
                     removeAllitem();
+                    distance.setTextColor(Color.parseColor("#40000000"));
+                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_default));
                     if (locationControll) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -664,6 +684,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 case R.id.displayMoveRight:
                     mapMoveControll(3);
                     removeAllitem();
+                    distance.setTextColor(Color.parseColor("#40000000"));
+                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_default));
                     if (locationControll) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -679,6 +701,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 case R.id.displayMoveLeft:
                     mapMoveControll(4);
                     removeAllitem();
+                    distance.setTextColor(Color.parseColor("#40000000"));
+                    distance.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.circle_default));
                     if (locationControll) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
